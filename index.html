@@ -121,13 +121,13 @@ select option{background:var(--bg3)}
 .pw{height:3px;background:var(--bg3);border-radius:2px;margin-bottom:5px;overflow:hidden}
 .pf{height:100%;background:var(--ac);border-radius:2px;width:0;transition:width .3s}
 .rst{font-size:11px;color:var(--t2);text-align:center;min-height:14px;margin-bottom:10px}
-.sb3{border-radius:9px;padding:13px;margin-bottom:11px;overflow:visible;word-break:break-word}
+.sb3{border-radius:9px;padding:14px 16px;margin-bottom:12px;overflow:visible;word-break:break-word;max-height:none}
 .sfr{background:rgba(20,184,166,.07);border:1px solid rgba(20,184,166,.18)}
 .sai{background:rgba(59,130,246,.07);border:1px solid rgba(59,130,246,.18)}
-.slb{font-size:9px;font-weight:700;letter-spacing:.8px;text-transform:uppercase;margin-bottom:7px}
+.slb{font-size:10px;font-weight:700;letter-spacing:.6px;text-transform:uppercase;margin-bottom:10px;display:flex;align-items:center;gap:5px}
 .slf{color:#5eead4}
 .sla{color:var(--ac)}
-.stx{font-size:13px;line-height:1.8;white-space:pre-wrap;word-break:break-word;overflow-wrap:anywhere}
+.stx{font-size:13px;line-height:1.9;white-space:pre-wrap;word-break:break-word;overflow-wrap:anywhere;overflow:visible;max-height:none}
 .rc{background:var(--bg2);border:1px solid var(--bd);border-radius:10px;overflow:hidden;margin-bottom:9px}
 .rch{display:flex;align-items:center;gap:7px;padding:9px 13px;border-bottom:1px solid var(--bd);background:var(--bg3)}
 .rct{font-size:13px;font-weight:500}
@@ -581,7 +581,47 @@ function isEng(t){if(!t)return false;const e=(t.match(/[a-zA-Z]/g)||[]).length,t
 const KW_N=['인상','상승','우려','하락','감소','위기','악화','충격','급락','경고','리스크','손실','침체','crash','warning','risk','decline','fall'];
 const KW_P=['회복','개선','성장','증가','돌파','급등','최고','호조','서프라이즈','확대','rally','surge','record','growth','beat'];
 function ckw(t,kws){return kws.some(k=>t.includes(k)||t.toLowerCase().includes(k.toLowerCase()));}
-function freeSum(arts){const bc={};arts.forEach(a=>{if(!bc[a.cat])bc[a.cat]=[];bc[a.cat].push(a);});const L=[];const mac=[...(bc.macro||[]),...(bc.global||[])].slice(0,5);if(mac.length){L.push('【거시경제 시그널】');mac.slice(0,3).forEach(a=>{L.push(`${ckw(a.title,KW_N)?'⚠ ':ckw(a.title,KW_P)?'↑ ':'· '}${a.title.slice(0,50)}${a.title.length>50?'...':''}`);});L.push('');}const mkt=(bc.market||[]).slice(0,4);if(mkt.length){L.push('【시장/수급 동향】');mkt.slice(0,3).forEach(a=>{L.push(`${ckw(a.title,KW_N)?'⚠ ':'· '}${a.title.slice(0,50)}${a.title.length>50?'...':''}`);});L.push('');}const corp=(bc.corp||[]).slice(0,5);if(corp.length){L.push('【기업공시 주목사항】');corp.slice(0,3).forEach(a=>L.push(`· ${a.title.slice(0,50)}${a.title.length>50?'...':''}`));L.push('');}const risk=arts.filter(a=>ckw(a.title,KW_N));L.push('【리스크 경고】');if(risk.length){risk.slice(0,2).forEach(a=>L.push(`⚠ ${a.title.slice(0,55)}${a.title.length>55?'...':''}`));}else{L.push('특이사항 없음');}return L.join('\n');}
+function trimTitle(t,max){
+  if(!t)return'';
+  var len=0,i=0;
+  for(;i<t.length;i++){len+=t.charCodeAt(i)>127?1:0.5;if(len>=max)break;}
+  return i<t.length?t.slice(0,i)+'\u2026':t;
+}
+function freeSum(arts){
+  var bc={};
+  arts.forEach(function(a){if(!bc[a.cat])bc[a.cat]=[];bc[a.cat].push(a);});
+  var L=[];
+  var mac=(bc.macro||[]).concat(bc.global||[]).slice(0,6);
+  if(mac.length){
+    L.push('【거시경제 시그널】');
+    mac.slice(0,4).forEach(function(a){
+      var sign=ckw(a.title,KW_N)?'⚠ ':ckw(a.title,KW_P)?'↑ ':'· ';
+      L.push(sign+trimTitle(a.title,60));
+      if(a.desc&&a.desc.length>5) L.push('   └ '+trimTitle(a.desc,70));
+    });
+    L.push('');
+  }
+  var mkt=(bc.market||[]).slice(0,5);
+  if(mkt.length){
+    L.push('【시장/수급 동향】');
+    mkt.slice(0,3).forEach(function(a){
+      L.push((ckw(a.title,KW_N)?'⚠ ':'· ')+trimTitle(a.title,60));
+      if(a.desc&&a.desc.length>5) L.push('   └ '+trimTitle(a.desc,70));
+    });
+    L.push('');
+  }
+  var corp=(bc.corp||[]).slice(0,6);
+  if(corp.length){
+    L.push('【기업공시 주목사항】');
+    corp.slice(0,4).forEach(function(a){L.push('· '+trimTitle(a.title,60));});
+    L.push('');
+  }
+  var risk=arts.filter(function(a){return ckw(a.title,KW_N);}).slice(0,3);
+  L.push('【리스크 경고】');
+  if(risk.length){risk.forEach(function(a){L.push('⚠ '+trimTitle(a.title,70));});}
+  else{L.push('특이사항 없음');}
+  return L.join('\n');
+}
 
 /* Claude API */
 async function callClaude(key,focus,arts){const txt=arts.slice(0,30).map((a,i)=>`[${i+1}][${CATS[a.cat]?.label||a.cat}] ${a.title}\n${a.desc}`).join('\n\n');const r=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json','x-api-key':key,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:1200,system:`전업투자자 어시스턴트. 프로파일: ${focus}. 모든 응답 한국어.`,messages:[{role:'user',content:`오늘 RSS 기사:\n\n${txt}\n\n형식:\n【거시경제 시그널】2-3줄\n\n【시장/수급 동향】2-3줄\n\n【기업공시 주목사항】2-3줄\n\n【포트폴리오 점검 포인트】1-2줄\n\n【리스크 경고】없으면 "특이사항 없음"`}]})});if(!r.ok){const e=await r.json().catch(()=>({}));throw new Error(e.error?.message||`HTTP ${r.status}`);}const d=await r.json();return d.content?.[0]?.text||'';}

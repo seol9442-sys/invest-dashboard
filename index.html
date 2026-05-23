@@ -1,0 +1,605 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>투자 정보 일일 요약</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&family=JetBrains+Mono:wght@400;500&display=swap');
+:root {
+  --bg:#0a0c0f; --bg2:#111418; --bg3:#181c22; --bg4:#1e2330;
+  --border:rgba(255,255,255,.07); --border2:rgba(255,255,255,.12);
+  --text:#e8eaf0; --text2:#8892a4; --text3:#4a5568;
+  --accent:#3b82f6; --accent2:#1d4ed8;
+  --green:#10b981; --amber:#f59e0b; --red:#ef4444; --purple:#8b5cf6; --teal:#14b8a6;
+  --mono:'JetBrains Mono',monospace; --sans:'Noto Sans KR',sans-serif;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--text);font-family:var(--sans);font-size:14px;min-height:100vh;line-height:1.6}
+
+.header{background:var(--bg2);border-bottom:1px solid var(--border);padding:0 24px;height:56px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100}
+.logo{display:flex;align-items:center;gap:10px;font-size:15px;font-weight:700;letter-spacing:-.3px}
+.logo-dot{width:8px;height:8px;border-radius:50%;background:var(--green);animation:blink 2s infinite}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.3}}
+.header-meta{font-size:12px;color:var(--text2);font-family:var(--mono)}
+
+.layout{display:grid;grid-template-columns:240px 1fr;min-height:calc(100vh - 56px)}
+.sidebar{background:var(--bg2);border-right:1px solid var(--border);padding:16px 12px;display:flex;flex-direction:column;gap:4px}
+.sb-section{font-size:10px;font-weight:700;letter-spacing:1.2px;color:var(--text3);text-transform:uppercase;padding:10px 8px 3px}
+.sb-item{display:flex;align-items:center;gap:7px;padding:6px 8px;border-radius:6px;font-size:12px;color:var(--text2);cursor:default}
+.sb-item:hover{background:var(--bg3)}
+.cat-dot{width:6px;height:6px;border-radius:50%;flex-shrink:0}
+.sb-name{flex:1}
+
+.main{padding:20px;overflow-y:auto}
+.tabs{display:flex;gap:2px;margin-bottom:18px;border-bottom:1px solid var(--border);padding-bottom:0}
+.tab-btn{padding:8px 16px;font-size:13px;font-family:var(--sans);background:transparent;border:none;color:var(--text2);cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-1px;transition:all .15s}
+.tab-btn:hover{color:var(--text)}
+.tab-btn.active{color:var(--accent);border-bottom-color:var(--accent);font-weight:500}
+.tab-panel{display:none}
+.tab-panel.active{display:block}
+
+.section-label{font-size:10px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--text3);margin-bottom:10px}
+.input-row{display:flex;gap:7px;margin-bottom:8px;flex-wrap:wrap}
+input,select{background:var(--bg3);border:1px solid var(--border);border-radius:6px;padding:8px 11px;color:var(--text);font-family:var(--sans);font-size:12px;outline:none;transition:border-color .15s}
+input:focus,select:focus{border-color:var(--accent)}
+input::placeholder{color:var(--text3)}
+select option{background:var(--bg3)}
+.url-inp{flex:1;min-width:180px;font-family:var(--mono)!important;font-size:11px!important}
+.name-inp{width:110px}
+.cat-sel{width:90px}
+.btn{padding:7px 14px;border-radius:6px;border:1px solid var(--border);background:transparent;color:var(--text);font-family:var(--sans);font-size:12px;cursor:pointer;transition:all .15s;display:inline-flex;align-items:center;gap:5px;white-space:nowrap}
+.btn:hover{background:var(--bg3);border-color:var(--border2)}
+.btn-primary{background:var(--accent2);border-color:var(--accent);color:#fff;font-weight:500}
+.btn-primary:hover{background:var(--accent)}
+.btn-del:hover{background:rgba(239,68,68,.15);border-color:var(--red);color:var(--red)}
+
+.feed-table{width:100%;border-collapse:collapse;margin-bottom:6px}
+.feed-table th{text-align:left;font-size:10px;font-weight:700;letter-spacing:.8px;text-transform:uppercase;color:var(--text3);padding:5px 10px;border-bottom:1px solid var(--border)}
+.feed-table td{padding:7px 10px;border-bottom:1px solid var(--border);font-size:12px;vertical-align:middle}
+.feed-table tr:hover td{background:var(--bg3)}
+.cat-pill{display:inline-block;padding:2px 8px;border-radius:4px;font-size:10px;font-weight:500}
+.url-mono{font-family:var(--mono);font-size:10px;color:var(--text2);max-width:260px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;display:block}
+
+.hint-box{background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:12px 14px;font-size:12px;color:var(--text2);line-height:1.7;margin-top:10px}
+.hint-box code{font-family:var(--mono);font-size:10px;color:#93c5fd;word-break:break-all}
+
+/* 요약 탭 */
+.mode-toggle{display:flex;gap:8px;margin-bottom:14px}
+.mode-btn{flex:1;padding:9px;border-radius:8px;border:1px solid var(--border);background:transparent;color:var(--text2);font-family:var(--sans);font-size:12px;cursor:pointer;transition:all .15s;text-align:center}
+.mode-btn:hover{background:var(--bg3)}
+.mode-btn.active{border-color:var(--accent);color:var(--accent);background:rgba(59,130,246,.08);font-weight:500}
+
+.api-box{background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:13px;margin-bottom:12px}
+.api-row{display:flex;align-items:center;gap:8px;margin-bottom:7px}
+.api-row:last-child{margin-bottom:0}
+.api-label{font-size:11px;color:var(--text2);width:80px;flex-shrink:0}
+.api-row input{flex:1;font-family:var(--mono);font-size:11px;padding:7px 10px}
+
+.run-btn{width:100%;padding:12px;border-radius:8px;border:1px solid var(--border2);background:var(--bg3);color:var(--text);font-family:var(--sans);font-size:14px;font-weight:500;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;transition:all .2s;margin-bottom:8px}
+.run-btn:hover:not(:disabled){background:var(--bg4);border-color:var(--accent)}
+.run-btn.with-api{background:var(--accent2);border-color:var(--accent);color:#fff}
+.run-btn.with-api:hover:not(:disabled){background:var(--accent)}
+.run-btn:disabled{opacity:.5;cursor:not-allowed}
+
+.prog-wrap{height:3px;background:var(--bg3);border-radius:2px;margin-bottom:6px;overflow:hidden}
+.prog-fill{height:100%;background:var(--accent);border-radius:2px;width:0;transition:width .35s}
+.run-status{font-size:11px;color:var(--text2);text-align:center;min-height:16px;margin-bottom:12px}
+
+/* 결과 */
+.summary-box{background:linear-gradient(135deg,rgba(59,130,246,.08),rgba(139,92,246,.05));border:1px solid rgba(59,130,246,.2);border-radius:10px;padding:16px;margin-bottom:14px}
+.summary-label{font-size:10px;font-weight:700;letter-spacing:.8px;text-transform:uppercase;color:var(--accent);margin-bottom:10px;display:flex;align-items:center;gap:6px}
+.summary-label.free{color:var(--teal)}
+.summary-label.free-box{background:linear-gradient(135deg,rgba(20,184,166,.08),rgba(16,185,129,.05));border-color:rgba(20,184,166,.2)}
+.summary-text{font-size:13px;line-height:1.75;white-space:pre-wrap}
+
+.result-card{background:var(--bg2);border:1px solid var(--border);border-radius:10px;overflow:hidden;margin-bottom:10px}
+.rc-header{display:flex;align-items:center;gap:8px;padding:11px 15px;border-bottom:1px solid var(--border);background:var(--bg3)}
+.rc-title{font-size:13px;font-weight:500}
+.rc-count{font-size:11px;color:var(--text2);margin-left:auto;font-family:var(--mono)}
+
+.art-row{display:flex;gap:11px;padding:11px 15px;border-bottom:1px solid var(--border);transition:background .15s;cursor:pointer}
+.art-row:last-child{border:none}
+.art-row:hover{background:var(--bg3)}
+.art-left{display:flex;flex-direction:column;align-items:center;gap:5px;padding-top:3px}
+.art-num{font-size:10px;color:var(--text3);font-family:var(--mono)}
+.imp-dot{width:7px;height:7px;border-radius:50%}
+.art-body{flex:1;min-width:0}
+.art-ttl{font-size:13px;font-weight:500;line-height:1.4;margin-bottom:3px}
+.art-desc{font-size:11px;color:var(--text2);line-height:1.5;margin-bottom:5px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.art-foot{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.art-src{font-size:10px;color:var(--text3);font-family:var(--mono)}
+.imp-badge{font-size:10px;padding:1px 7px;border-radius:3px;font-weight:500}
+
+.empty-state{text-align:center;padding:48px 20px;color:var(--text3)}
+.empty-icon{font-size:32px;margin-bottom:10px}
+.empty-msg{font-size:13px;line-height:1.6}
+
+.error-box{background:rgba(239,68,68,.08);border:1px solid rgba(239,68,68,.25);border-radius:8px;padding:12px 14px;font-size:12px;color:#fca5a5;margin-bottom:10px;line-height:1.6}
+.info-box{background:rgba(20,184,166,.06);border:1px solid rgba(20,184,166,.2);border-radius:8px;padding:11px 14px;font-size:12px;color:#5eead4;margin-bottom:12px;line-height:1.6}
+
+@media(max-width:768px){
+  .layout{grid-template-columns:1fr}
+  .sidebar{display:none}
+  .main{padding:14px}
+  .header{padding:0 14px}
+  .header-meta{display:none}
+  .input-row{flex-direction:column}
+  .url-inp,.name-inp,.cat-sel{width:100%}
+  .feed-table th:nth-child(3),.feed-table td:nth-child(3){display:none}
+  .art-desc{display:none}
+}
+</style>
+</head>
+<body>
+
+<header class="header">
+  <div class="logo"><div class="logo-dot"></div>투자 정보 일일 요약</div>
+  <div class="header-meta" id="hdate"></div>
+</header>
+
+<div class="layout">
+  <aside class="sidebar">
+    <div class="sb-section">등록된 피드</div>
+    <div id="sb-feeds"></div>
+  </aside>
+
+  <main class="main">
+    <div class="tabs">
+      <button class="tab-btn active" onclick="goTab(0)">피드 설정</button>
+      <button class="tab-btn" onclick="goTab(1)">오늘의 요약</button>
+    </div>
+
+    <!-- 피드 설정 -->
+    <div class="tab-panel active" id="p0">
+      <div class="section-label">RSS 피드 추가</div>
+      <div class="input-row">
+        <input type="text" id="in-url" class="url-inp" placeholder="RSS URL 입력 (예: https://dart.fss.or.kr/rss/todayRss.do)">
+        <input type="text" id="in-name" class="name-inp" placeholder="피드 이름">
+        <select id="in-cat" class="cat-sel">
+          <option value="macro">거시경제</option>
+          <option value="market">국내/시장</option>
+          <option value="corp">기업공시</option>
+          <option value="global">글로벌</option>
+          <option value="insight">인사이트</option>
+        </select>
+        <button class="btn btn-primary" onclick="addFeed()">+ 추가</button>
+      </div>
+      <table class="feed-table">
+        <thead><tr><th>카테고리</th><th>이름</th><th>RSS URL</th><th></th></tr></thead>
+        <tbody id="ftbody"></tbody>
+      </table>
+      <div class="hint-box">
+        <strong style="color:var(--text)">바로 복사해서 추가할 수 있는 투자 필수 RSS</strong><br><br>
+        DART 공시: <code>https://dart.fss.or.kr/rss/todayRss.do</code><br>
+        한국은행: <code>https://www.bok.or.kr/rss/rssIndex.do?menuNo=200764</code><br>
+        미국 연준: <code>https://www.federalreserve.gov/feeds/press_all.xml</code><br>
+        Bloomberg: <code>https://feeds.bloomberg.com/markets/news.rss</code><br>
+        Reuters: <code>https://feeds.reuters.com/reuters/businessNews</code>
+      </div>
+    </div>
+
+    <!-- 오늘의 요약 -->
+    <div class="tab-panel" id="p1">
+
+      <div class="mode-toggle">
+        <button class="mode-btn active" id="mode-free" onclick="setMode('free')">
+          무료 모드 — API Key 불필요
+        </button>
+        <button class="mode-btn" id="mode-ai" onclick="setMode('ai')">
+          AI 요약 모드 — Claude API 사용
+        </button>
+      </div>
+
+      <div id="ai-setup" style="display:none">
+        <div class="api-box">
+          <div class="api-row">
+            <span class="api-label">API Key</span>
+            <input type="password" id="api-key" placeholder="sk-ant-api... (console.anthropic.com 에서 무료 발급)">
+          </div>
+          <div class="api-row">
+            <span class="api-label">분석 관점</span>
+            <input type="text" id="focus" value="30대 전업투자자, 한국·미국 주식 중심, 시장수익률 초과 추구" style="font-family:var(--sans);font-size:12px">
+          </div>
+        </div>
+      </div>
+
+      <div id="free-info" class="info-box">
+        기사 수집 → 카테고리 분류 → 키워드 기반 자동 요약을 API Key 없이 무료로 실행합니다.<br>
+        더 깊은 AI 분석이 필요하면 <strong>AI 요약 모드</strong>로 전환하세요.
+      </div>
+
+      <button class="run-btn" id="run-btn" onclick="runSummary()">
+        ▶ 오늘의 기사 수집 및 요약 실행
+      </button>
+      <div class="prog-wrap"><div class="prog-fill" id="prog"></div></div>
+      <div class="run-status" id="run-status"></div>
+
+      <div id="result-area">
+        <div class="empty-state">
+          <div class="empty-icon">◎</div>
+          <div class="empty-msg">위 버튼을 눌러<br>오늘의 투자 요약을 생성하세요<br><br>
+            <span style="font-size:11px;color:var(--text3)">API Key 없이도 기사 수집 및 기본 요약 가능</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>
+
+<script>
+// ── 날짜 ──
+const today = new Date();
+document.getElementById('hdate').textContent =
+  today.toLocaleDateString('ko-KR',{year:'numeric',month:'long',day:'numeric',weekday:'short'});
+
+// ── 카테고리 ──
+const CATS = {
+  macro:   {label:'거시경제', color:'#3b82f6', bg:'rgba(59,130,246,.12)',  text:'#93c5fd'},
+  market:  {label:'국내/시장', color:'#10b981', bg:'rgba(16,185,129,.12)', text:'#6ee7b7'},
+  corp:    {label:'기업공시', color:'#f59e0b', bg:'rgba(245,158,11,.12)',  text:'#fcd34d'},
+  global:  {label:'글로벌',   color:'#14b8a6', bg:'rgba(20,184,166,.12)',  text:'#5eead4'},
+  insight: {label:'인사이트', color:'#8b5cf6', bg:'rgba(139,92,246,.12)',  text:'#c4b5fd'},
+};
+const IMP_COLORS = {
+  high: {bg:'rgba(239,68,68,.15)', text:'#fca5a5', dot:'#ef4444', label:'주요'},
+  mid:  {bg:'rgba(245,158,11,.12)',text:'#fcd34d', dot:'#f59e0b', label:'참고'},
+  low:  {bg:'rgba(100,116,139,.1)',text:'#94a3b8', dot:'#475569', label:'일반'},
+};
+
+// ── 피드 저장 ──
+const SK = 'inv_feeds_v2';
+let feeds = [];
+function loadFeeds(){
+  try{ const s=localStorage.getItem(SK); if(s){feeds=JSON.parse(s);return;} }catch(e){}
+  feeds=[
+    {id:1,name:'DART 공시',       url:'https://dart.fss.or.kr/rss/todayRss.do',                    cat:'corp'},
+    {id:2,name:'한국은행',         url:'https://www.bok.or.kr/rss/rssIndex.do?menuNo=200764',        cat:'macro'},
+    {id:3,name:'미국 연준',        url:'https://www.federalreserve.gov/feeds/press_all.xml',         cat:'macro'},
+    {id:4,name:'Bloomberg Markets',url:'https://feeds.bloomberg.com/markets/news.rss',               cat:'global'},
+    {id:5,name:'Reuters Business', url:'https://feeds.reuters.com/reuters/businessNews',             cat:'global'},
+  ];
+  saveFeeds();
+}
+function saveFeeds(){ try{localStorage.setItem(SK,JSON.stringify(feeds));}catch(e){} }
+
+function renderFeeds(){
+  const tb=document.getElementById('ftbody');
+  const sb=document.getElementById('sb-feeds');
+  tb.innerHTML=''; sb.innerHTML='';
+  const grp={};
+  feeds.forEach(f=>{ if(!grp[f.cat])grp[f.cat]=[]; grp[f.cat].push(f); });
+  Object.entries(grp).forEach(([cat,items])=>{
+    const c=CATS[cat]||CATS.insight;
+    const sec=document.createElement('div');
+    sec.className='sb-section'; sec.textContent=c.label; sb.appendChild(sec);
+    items.forEach(f=>{
+      const el=document.createElement('div'); el.className='sb-item';
+      el.innerHTML=`<span class="cat-dot" style="background:${c.color}"></span><span class="sb-name">${f.name}</span>`;
+      sb.appendChild(el);
+    });
+  });
+  feeds.forEach(f=>{
+    const c=CATS[f.cat]||CATS.insight;
+    const tr=document.createElement('tr');
+    tr.innerHTML=`<td><span class="cat-pill" style="background:${c.bg};color:${c.text}">${c.label}</span></td>
+      <td style="font-weight:500">${esc(f.name)}</td>
+      <td><span class="url-mono">${esc(f.url)}</span></td>
+      <td><button class="btn btn-del" onclick="delFeed(${f.id})" style="padding:3px 10px;font-size:11px">삭제</button></td>`;
+    tb.appendChild(tr);
+  });
+}
+
+function addFeed(){
+  const url=document.getElementById('in-url').value.trim();
+  const name=document.getElementById('in-name').value.trim();
+  const cat=document.getElementById('in-cat').value;
+  if(!url){alert('RSS URL을 입력해주세요');return;}
+  let host=url; try{host=new URL(url).hostname;}catch(e){}
+  feeds.push({id:Date.now(),name:name||host,url,cat});
+  saveFeeds(); renderFeeds();
+  document.getElementById('in-url').value='';
+  document.getElementById('in-name').value='';
+}
+function delFeed(id){ feeds=feeds.filter(f=>f.id!==id); saveFeeds(); renderFeeds(); }
+
+// ── 탭 ──
+function goTab(n){
+  document.querySelectorAll('.tab-btn').forEach((b,i)=>b.classList.toggle('active',i===n));
+  document.querySelectorAll('.tab-panel').forEach((p,i)=>p.classList.toggle('active',i===n));
+}
+
+// ── 모드 ──
+let currentMode='free';
+function setMode(m){
+  currentMode=m;
+  document.getElementById('mode-free').classList.toggle('active',m==='free');
+  document.getElementById('mode-ai').classList.toggle('active',m==='ai');
+  document.getElementById('ai-setup').style.display=m==='ai'?'block':'none';
+  document.getElementById('free-info').style.display=m==='free'?'block':'none';
+  const btn=document.getElementById('run-btn');
+  btn.classList.toggle('with-api',m==='ai');
+  btn.textContent= m==='ai'
+    ? '▶ Claude AI 요약 실행 (API Key 사용)'
+    : '▶ 오늘의 기사 수집 및 요약 실행';
+}
+
+// ── RSS 파싱 ──
+async function fetchRSS(url){
+  const proxies=[
+    `https://api.allorigins.win/get?url=${encodeURIComponent(url)}`,
+    `https://api.codetabs.com/v1/proxy?quest=${encodeURIComponent(url)}`,
+  ];
+  for(const proxy of proxies){
+    try{
+      const res=await fetch(proxy,{signal:AbortSignal.timeout(10000)});
+      let text='';
+      if(proxy.includes('allorigins')){
+        const j=await res.json(); text=j.contents||'';
+      } else {
+        text=await res.text();
+      }
+      if(!text) continue;
+      const xml=new DOMParser().parseFromString(text,'text/xml');
+      const items=Array.from(xml.querySelectorAll('item')).slice(0,10);
+      if(items.length===0) continue;
+      return items.map(item=>({
+        title: item.querySelector('title')?.textContent?.trim()||'',
+        desc:  item.querySelector('description')?.textContent?.replace(/<[^>]*>/g,'').trim().slice(0,250)||'',
+        link:  item.querySelector('link')?.textContent?.trim()||'',
+        pubDate: item.querySelector('pubDate')?.textContent?.trim()||'',
+      })).filter(i=>i.title);
+    }catch(e){ continue; }
+  }
+  return [];
+}
+
+function isRecent(d){
+  if(!d) return true;
+  try{ return (Date.now()-new Date(d).getTime())<36*3600*1000; }catch{return true;}
+}
+
+// ── 무료 키워드 요약 ──
+const KEYWORDS={
+  positive:['인상','상승','호조','증가','확대','회복','개선','성장','돌파','급등','최고','수주','어닝','서프라이즈'],
+  negative:['인하','하락','우려','감소','축소','위기','악화','충격','급락','최저','경고','리스크','손실','위험','충돌'],
+  macro:   ['금리','CPI','물가','기준금리','연준','FOMC','한국은행','환율','GDP','무역','수출','수입','경기'],
+  market:  ['코스피','코스닥','외국인','기관','수급','공매도','선물','ETF','지수','시장'],
+  corp:    ['공시','실적','배당','자사주','합병','인수','증자','감자','계약','수주'],
+};
+function freeAutoSummary(articles){
+  const bycat={};
+  articles.forEach(a=>{ if(!bycat[a.cat])bycat[a.cat]=[]; bycat[a.cat].push(a); });
+  const lines=[];
+
+  const checkKw=(text,kws)=>kws.some(k=>text.includes(k));
+
+  // 거시경제
+  const macroArts=[...(bycat.macro||[]),(bycat.global||[])].flat().slice(0,5);
+  if(macroArts.length>0){
+    lines.push('【거시경제 시그널】');
+    macroArts.slice(0,3).forEach(a=>{
+      const t=a.title;
+      const isPos=checkKw(t,KEYWORDS.positive);
+      const isNeg=checkKw(t,KEYWORDS.negative);
+      const sign=isNeg?'⚠ ':isPos?'↑ ':'· ';
+      lines.push(`${sign}${t.slice(0,45)}${t.length>45?'...':''}`);
+    });
+    lines.push('');
+  }
+
+  // 시장/수급
+  const marketArts=(bycat.market||[]).slice(0,4);
+  if(marketArts.length>0){
+    lines.push('【시장/수급 동향】');
+    marketArts.slice(0,3).forEach(a=>{
+      const isNeg=checkKw(a.title,KEYWORDS.negative);
+      lines.push(`${isNeg?'⚠ ':'· '}${a.title.slice(0,45)}${a.title.length>45?'...':''}`);
+    });
+    lines.push('');
+  }
+
+  // 기업공시
+  const corpArts=(bycat.corp||[]).slice(0,5);
+  if(corpArts.length>0){
+    lines.push('【기업공시 주목사항】');
+    corpArts.slice(0,3).forEach(a=>{
+      lines.push(`· ${a.title.slice(0,45)}${a.title.length>45?'...':''}`);
+    });
+    lines.push('');
+  }
+
+  // 리스크 키워드 스캔
+  const riskArts=articles.filter(a=>checkKw(a.title,KEYWORDS.negative));
+  if(riskArts.length>0){
+    lines.push('【리스크 경고】');
+    riskArts.slice(0,2).forEach(a=>{
+      lines.push(`⚠ ${a.title.slice(0,50)}${a.title.length>50?'...':''}`);
+    });
+  } else {
+    lines.push('【리스크 경고】\n특이사항 없음');
+  }
+
+  return lines.join('\n')||'기사를 분석했습니다. 아래 목록을 확인하세요.';
+}
+
+// ── Claude API 요약 ──
+async function callClaude(apiKey, focus, articles){
+  const txt=articles.slice(0,30).map((a,i)=>
+    `[${i+1}][${CATS[a.cat]?.label||a.cat}] ${a.title}\n${a.desc}`
+  ).join('\n\n');
+
+  const res=await fetch('https://api.anthropic.com/v1/messages',{
+    method:'POST',
+    headers:{
+      'Content-Type':'application/json',
+      'x-api-key':apiKey,
+      'anthropic-version':'2023-06-01',
+      'anthropic-dangerous-direct-browser-access':'true',
+    },
+    body:JSON.stringify({
+      model:'claude-sonnet-4-20250514',
+      max_tokens:1200,
+      system:`당신은 전업투자자의 투자 정보 어시스턴트입니다. 투자자 프로파일: ${focus}. RSS 기사를 투자 판단에 실질적으로 도움이 되게 분석하세요.`,
+      messages:[{role:'user',content:
+        `오늘 수집된 RSS 기사:\n\n${txt}\n\n아래 형식으로 요약하세요:\n\n【거시경제 시그널】\n2-3줄\n\n【시장/수급 동향】\n2-3줄\n\n【기업공시 주목사항】\n2-3줄\n\n【포트폴리오 점검 포인트】\n1-2줄\n\n【리스크 경고】\n있을 경우만, 없으면 "특이사항 없음"`
+      }],
+    }),
+  });
+  if(!res.ok){
+    const e=await res.json().catch(()=>({}));
+    throw new Error(e.error?.message||`HTTP ${res.status}`);
+  }
+  const d=await res.json();
+  return d.content?.[0]?.text||'';
+}
+
+// ── 실행 ──
+let running=false;
+async function runSummary(){
+  if(running)return;
+  if(feeds.length===0){alert('피드를 먼저 등록해주세요');return;}
+  if(currentMode==='ai'&&!document.getElementById('api-key').value.trim()){
+    alert('AI 모드에서는 API Key가 필요합니다.\n무료 모드로 전환하거나 API Key를 입력해주세요.');
+    return;
+  }
+
+  running=true;
+  const btn=document.getElementById('run-btn');
+  btn.disabled=true;
+  const prog=document.getElementById('prog');
+  const status=document.getElementById('run-status');
+  const area=document.getElementById('result-area');
+  area.innerHTML='';
+
+  const setP=(pct,msg)=>{ prog.style.width=pct+'%'; status.textContent=msg; };
+
+  try{
+    // 1. RSS 수집
+    const allArts=[];
+    for(let i=0;i<feeds.length;i++){
+      const f=feeds[i];
+      setP(5+Math.round(i/feeds.length*50), `수집 중: ${f.name}`);
+      const items=await fetchRSS(f.url);
+      const recent=items.filter(a=>isRecent(a.pubDate));
+      recent.forEach(a=>allArts.push({...a,feedName:f.name,cat:f.cat}));
+    }
+
+    if(allArts.length===0){
+      area.innerHTML=`<div class="error-box">
+        수집된 기사가 없습니다.<br>
+        일부 RSS 피드는 CORS 정책으로 브라우저에서 직접 접근이 제한됩니다.<br>
+        잠시 후 다시 시도하거나, 다른 피드 URL을 추가해보세요.
+      </div>`;
+      return;
+    }
+
+    // 2. 요약 생성
+    let summary='';
+    let isAI=false;
+
+    if(currentMode==='ai'){
+      setP(60,'Claude AI 분석 중...');
+      const apiKey=document.getElementById('api-key').value.trim();
+      const focus=document.getElementById('focus').value.trim();
+      try{
+        summary=await callClaude(apiKey,focus,allArts);
+        isAI=true;
+        setP(95,'AI 요약 완료');
+      }catch(e){
+        summary=`⚠ Claude API 오류: ${e.message}\n\n아래 무료 자동 요약으로 대체합니다.\n\n`+freeAutoSummary(allArts);
+        isAI=false;
+      }
+    } else {
+      setP(65,'키워드 분석 중...');
+      await new Promise(r=>setTimeout(r,400));
+      summary=freeAutoSummary(allArts);
+      setP(90,'요약 완료');
+    }
+
+    setP(100,'');
+    renderResults(allArts,summary,isAI);
+
+  }catch(e){
+    area.innerHTML=`<div class="error-box">오류: ${e.message}</div>`;
+  }finally{
+    btn.disabled=false;
+    btn.textContent= currentMode==='ai'
+      ? '↺ Claude AI 요약 다시 실행'
+      : '↺ 다시 실행';
+    running=false;
+    setTimeout(()=>{ prog.style.width='0'; status.textContent=''; },1500);
+  }
+}
+
+function renderResults(articles, summary, isAI){
+  const area=document.getElementById('result-area');
+  area.innerHTML='';
+
+  // 요약 박스
+  const sb=document.createElement('div');
+  sb.className='summary-box'+(isAI?'':' free-box');
+  if(!isAI) sb.style.cssText='background:linear-gradient(135deg,rgba(20,184,166,.08),rgba(16,185,129,.05));border-color:rgba(20,184,166,.2)';
+  sb.innerHTML=`<div class="summary-label${isAI?'':' free'}">
+    ${isAI?'▲ Claude AI 종합 요약':'▲ 자동 요약 (키워드 기반 · 무료)'}
+  </div>
+  <div class="summary-text">${esc(summary)}</div>`;
+  area.appendChild(sb);
+
+  // 카테고리별 카드
+  const grp={};
+  articles.forEach(a=>{ if(!grp[a.cat])grp[a.cat]=[]; grp[a.cat].push(a); });
+  ['macro','market','corp','global','insight'].forEach(cat=>{
+    if(!grp[cat]||grp[cat].length===0) return;
+    const c=CATS[cat]||CATS.insight;
+    const card=document.createElement('div'); card.className='result-card';
+    let html=`<div class="rc-header">
+      <span class="cat-dot" style="background:${c.color}"></span>
+      <span class="rc-title">${c.label}</span>
+      <span class="rc-count">${grp[cat].length}건</span>
+    </div>`;
+    grp[cat].forEach((a,idx)=>{
+      const imp=idx===0?IMP_COLORS.high:idx<3?IMP_COLORS.mid:IMP_COLORS.low;
+      const link=a.link?`onclick="window.open('${a.link}','_blank')"`:'' ;
+      html+=`<div class="art-row" ${link} title="${a.link?'클릭하여 원문 보기':''}">
+        <div class="art-left">
+          <span class="art-num">${String(idx+1).padStart(2,'0')}</span>
+          <span class="imp-dot" style="background:${imp.dot}"></span>
+        </div>
+        <div class="art-body">
+          <div class="art-ttl">${esc(a.title)}</div>
+          ${a.desc?`<div class="art-desc">${esc(a.desc)}</div>`:''}
+          <div class="art-foot">
+            <span class="art-src">${esc(a.feedName)}</span>
+            <span class="art-src">${fmtTime(a.pubDate)}</span>
+            <span class="imp-badge" style="background:${imp.bg};color:${imp.text}">${imp.label}</span>
+            ${a.link?'<span class="art-src" style="color:var(--accent)">↗ 원문</span>':''}
+          </div>
+        </div>
+      </div>`;
+    });
+    card.innerHTML=html; area.appendChild(card);
+  });
+
+  // 푸터
+  const ft=document.createElement('div');
+  ft.style.cssText='text-align:center;padding:16px;color:var(--text3);font-size:11px;font-family:var(--mono)';
+  ft.textContent=`총 ${articles.length}건 · ${today.toLocaleTimeString('ko-KR')} 기준`;
+  area.appendChild(ft);
+}
+
+function esc(s){ return (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+function fmtTime(s){
+  if(!s)return'';
+  try{
+    const diff=Math.floor((Date.now()-new Date(s).getTime())/60000);
+    if(diff<60)return diff+'분 전';
+    if(diff<1440)return Math.floor(diff/60)+'시간 전';
+    return Math.floor(diff/1440)+'일 전';
+  }catch{return'';}
+}
+
+loadFeeds(); renderFeeds();
+</script>
+</body>
+</html>

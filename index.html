@@ -283,30 +283,30 @@ select option{background:var(--bg3)}
     <div class="sbsec">피드 목록</div>
     <div id="sblist"></div>
     <div class="sbsec" style="margin-top:8px">바로가기</div>
-    <div class="sbi link" onclick="goTab(2)">📋 추천 RSS</div>
-    <div class="sbi link" onclick="goTab(3)">📅 이벤트 캘린더</div>
-    <div class="sbi link" onclick="goTab(4)">📊 시장 센티먼트</div>
-    <div class="sbi link" onclick="goTab(5)">🐦 SNS 인플루언서</div>
-    <div class="sbi link" onclick="goTab(6)">🏛 13F · SEC</div>
-    <div class="sbi link" onclick="goTab(7)">📓 투자 판단 일지</div>
-    <div class="sbi link" onclick="goTab(8)">📈 시장 핵심 지표</div>
+    <div class="sbi link" onclick="goTab(3)">📋 추천 RSS</div>
+    <div class="sbi link" onclick="goTab(4)">📅 이벤트 캘린더</div>
+    <div class="sbi link" onclick="goTab(5)">📊 시장 센티먼트</div>
+    <div class="sbi link" onclick="goTab(6)">🐦 SNS 인플루언서</div>
+    <div class="sbi link" onclick="goTab(7)">🏛 13F · SEC</div>
+    <div class="sbi link" onclick="goTab(8)">📓 투자 판단 일지</div>
+    <div class="sbi link" onclick="goTab(0)">📈 시장 핵심 지표</div>
   </aside>
 
   <main class="mn">
     <div class="tabs">
-      <button class="tabb" data-tab="0" ac" onclick="goTab(0)">피드 설정</button>
-      <button class="tabb" data-tab="1"" onclick="goTab(1)">오늘의 요약</button>
-      <button class="tabb" data-tab="2"" onclick="goTab(2)">추천 RSS</button>
-      <button class="tabb" data-tab="3"" onclick="goTab(3)">이벤트 캘린더</button>
-      <button class="tabb" data-tab="4"" onclick="goTab(4)">센티먼트</button>
-      <button class="tabb" data-tab="5"" onclick="goTab(5)">SNS</button>
-      <button class="tabb" data-tab="6"" onclick="goTab(6)">13F·SEC</button>
-      <button class="tabb" data-tab="7"" onclick="goTab(7)">판단 일지</button>
-      <button class="tabb" data-tab="8"" onclick="goTab(8)">시장 지표</button>
+      <button class="tabb ac" data-tab="0" onclick="goTab(0)">시장 지표</button>
+      <button class="tabb" data-tab="1" onclick="goTab(1)">피드 설정</button>
+      <button class="tabb" data-tab="2" onclick="goTab(2)">오늘의 요약</button>
+      <button class="tabb" data-tab="3" onclick="goTab(3)">추천 RSS</button>
+      <button class="tabb" data-tab="4" onclick="goTab(4)">이벤트 캘린더</button>
+      <button class="tabb" data-tab="5" onclick="goTab(5)">센티먼트</button>
+      <button class="tabb" data-tab="6" onclick="goTab(6)">SNS</button>
+      <button class="tabb" data-tab="7" onclick="goTab(7)">13F·SEC</button>
+      <button class="tabb" data-tab="8" onclick="goTab(8)">판단 일지</button>
     </div>
 
     <!-- 0: 피드 설정 -->
-    <div class="tp ac" id="p0">
+    <div class="tp" id="p1">
       <div class="sl">RSS 피드 추가</div>
       <div class="ir">
         <input type="text" id="in-url" class="uinp" placeholder="RSS URL">
@@ -328,7 +328,7 @@ select option{background:var(--bg3)}
     </div>
 
     <!-- 1: 오늘의 요약 -->
-    <div class="tp" id="p1">
+    <div class="tp" id="p2">
       <div class="mb">
         <button class="mbb ac" id="m-free" onclick="setMode('free')">무료 모드<br><span style="font-size:10px;opacity:.7">키워드 자동 요약</span></button>
         <button class="mbb" id="m-ai" onclick="setMode('ai')">AI 요약 모드<br><span style="font-size:10px;opacity:.7">Claude API</span></button>
@@ -347,13 +347,13 @@ select option{background:var(--bg3)}
     </div>
 
     <!-- 2: 추천 RSS -->
-    <div class="tp" id="p2">
+    <div class="tp" id="p3">
       <div class="ib">검증된 RSS 목록입니다. + 추가 버튼으로 피드 설정에 바로 등록됩니다.</div>
       <div class="g2" id="rss-grid"></div>
     </div>
 
     <!-- 3: 이벤트 캘린더 -->
-    <div class="tp" id="p3">
+    <div class="tp" id="p4">
       <div class="ib">월별 캘린더로 주요 경제 이벤트를 확인하세요. 좌우 화살표 또는 월 탭으로 이동합니다.</div>
       <div class="wb">⚠ 2026년 주요 일정 기준입니다. 실제 발표일은 각 기관 홈페이지에서 반드시 재확인하세요.</div>
       <div class="cal-legend" id="cal-legend"></div>
@@ -387,7 +387,7 @@ select option{background:var(--bg3)}
 
 
     <!-- 4: 센티먼트 -->
-    <div class="tp" id="p4">
+    <div class="tp" id="p5">
       <div class="ib">시장 센티먼트 지표는 투자 판단의 보조 도구입니다. 단독으로 매매 결정에 사용하지 마세요.</div>
       <div class="sl" style="margin-bottom:10px">핵심 공포·탐욕 지표</div>
       <div class="sent-grid" id="sent-grid"></div>
@@ -398,20 +398,20 @@ select option{background:var(--bg3)}
     </div>
 
     <!-- 5: SNS -->
-    <div class="tp" id="p5">
+    <div class="tp" id="p6">
       <div class="wb">⚠ X(Twitter)는 2024년부터 공식 RSS 차단. 아래 링크로 직접 팔로우하거나 텔레그램 채널을 활용하세요.</div>
       <div class="sl" style="margin-bottom:10px">핵심 투자 인플루언서</div>
       <div class="g3" id="sns-grid"></div>
     </div>
 
     <!-- 6: 13F·SEC -->
-    <div class="tp" id="p6">
+    <div class="tp" id="p7">
       <div class="ib">13F는 미국 SEC에 분기별 제출되는 기관투자자 보유주식 공시입니다. 분기 종료 후 45일 이내 제출 — 참고용으로만 활용하세요.</div>
       <div id="edgar-content"></div>
     </div>
 
     <!-- 7: 판단 일지 -->
-    <div class="tp" id="p7">
+    <div class="tp" id="p8">
       <div class="jnl-stats" id="jnl-stats"></div>
       <div class="jnl-top">
         <button class="btn btnp" onclick="toggleForm()" id="form-toggle-btn">+ 새 판단 기록</button>
@@ -487,7 +487,7 @@ select option{background:var(--bg3)}
     </div>
 
         <!-- 8: 시장 핵심 지표 -->
-    <div class="tp" id="p8">
+    <div class="tp ac" id="p0">
       <div class="mkt-top-bar">
         <div>
           <div style="font-size:14px;font-weight:500;margin-bottom:2px">시장 핵심 지표</div>
@@ -565,7 +565,7 @@ function goTab(n){
     var el=document.getElementById('p'+i);
     if(el) el.style.display=(i===n)?'block':'none';
   }
-  if(n===8&&!mktLoaded){buildMktLinks();buildMktChecklist();loadMarketData();}
+  if(n===0&&!mktLoaded){buildMktLinks();buildMktChecklist();loadMarketData();}
 }
 
 /* 모드 */
@@ -1139,7 +1139,8 @@ function esc(s){return(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace
 function fmtTime(s){if(!s)return'';try{const d=Math.floor((Date.now()-new Date(s).getTime())/60000);if(d<60)return d+'분 전';if(d<1440)return Math.floor(d/60)+'시간 전';return Math.floor(d/1440)+'일 전';}catch{return'';}}
 
 loadFeeds();renderFeeds();loadJournal();buildRssGrid();buildCalendar();buildSentiment();buildSns();buildEdgar();renderJournal();
-goTab(0);
+// 시장지표 탭 초기 로드는 모든 함수 정의 후 실행
+window.addEventListener("DOMContentLoaded",function(){goTab(0);});
 
 /* ── 시장 핵심 지표 ── */
 const FX_PAIRS = [

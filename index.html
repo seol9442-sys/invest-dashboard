@@ -121,13 +121,13 @@ select option{background:var(--bg3)}
 .pw{height:3px;background:var(--bg3);border-radius:2px;margin-bottom:5px;overflow:hidden}
 .pf{height:100%;background:var(--ac);border-radius:2px;width:0;transition:width .3s}
 .rst{font-size:11px;color:var(--t2);text-align:center;min-height:14px;margin-bottom:10px}
-.sb3{border-radius:9px;padding:13px;margin-bottom:11px}
+.sb3{border-radius:9px;padding:13px;margin-bottom:11px;overflow:visible;word-break:break-word}
 .sfr{background:rgba(20,184,166,.07);border:1px solid rgba(20,184,166,.18)}
 .sai{background:rgba(59,130,246,.07);border:1px solid rgba(59,130,246,.18)}
 .slb{font-size:9px;font-weight:700;letter-spacing:.8px;text-transform:uppercase;margin-bottom:7px}
 .slf{color:#5eead4}
 .sla{color:var(--ac)}
-.stx{font-size:13px;line-height:1.8;white-space:pre-wrap}
+.stx{font-size:13px;line-height:1.8;white-space:pre-wrap;word-break:break-word;overflow-wrap:anywhere}
 .rc{background:var(--bg2);border:1px solid var(--bd);border-radius:10px;overflow:hidden;margin-bottom:9px}
 .rch{display:flex;align-items:center;gap:7px;padding:9px 13px;border-bottom:1px solid var(--bd);background:var(--bg3)}
 .rct{font-size:13px;font-weight:500}
@@ -152,19 +152,36 @@ select option{background:var(--bg3)}
 .eb{background:rgba(239,68,68,.07);border:1px solid rgba(239,68,68,.2);border-radius:7px;padding:10px 12px;font-size:12px;color:#fca5a5;margin-bottom:9px;line-height:1.6}
 
 /* 이벤트 캘린더 */
-.cal-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:9px;margin-bottom:12px}
-.cal-card{background:var(--bg2);border:1px solid var(--bd);border-radius:10px;overflow:hidden}
-.cal-hdr{display:flex;align-items:center;gap:7px;padding:9px 13px;background:var(--bg3);border-bottom:1px solid var(--bd);font-size:13px;font-weight:500}
-.ev-row{display:flex;align-items:flex-start;gap:10px;padding:8px 13px;border-bottom:.5px solid var(--bd);font-size:12px}
-.ev-row:last-child{border:none}
-.ev-date{font-family:var(--mn);font-size:10px;color:var(--t2);width:54px;flex-shrink:0;padding-top:2px}
-.ev-body{flex:1}
-.ev-name{font-weight:500;margin-bottom:1px}
-.ev-sub{font-size:10px;color:var(--t2)}
+.cal-nav{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;gap:10px}
+.cal-nav-title{font-size:16px;font-weight:500;text-align:center;flex:1}
+.cal-nav-btn{width:34px;height:34px;border-radius:50%;border:1px solid var(--bd);background:transparent;color:var(--t);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:16px;transition:all .15s;flex-shrink:0}
+.cal-nav-btn:hover{background:var(--bg3);border-color:var(--bd2)}
+.cal-month-wrap{position:relative;overflow:hidden}
+.cal-month{display:none}
+.cal-month.active{display:block}
+.cal-grid-7{display:grid;grid-template-columns:repeat(7,1fr);gap:2px;margin-bottom:12px}
+.cal-dow{text-align:center;font-size:10px;font-weight:700;color:var(--t3);padding:5px 0;letter-spacing:.5px}
+.cal-day{min-height:72px;border-radius:7px;border:0.5px solid var(--bd);padding:5px 6px;position:relative;background:var(--bg2);transition:background .15s;cursor:default}
+.cal-day:hover{background:var(--bg3)}
+.cal-day.today{border-color:var(--ac);background:rgba(59,130,246,.05)}
+.cal-day.other-month{opacity:.35}
+.cal-day.has-event{border-color:var(--bd2)}
+.day-num{font-size:11px;font-weight:500;color:var(--t2);margin-bottom:3px;display:block}
+.cal-day.today .day-num{color:var(--ac);font-weight:700}
+.cal-day.sunday .day-num{color:var(--rd)}
+.cal-day.saturday .day-num{color:#93c5fd}
+.ev-chip{font-size:9px;padding:2px 5px;border-radius:3px;margin-bottom:2px;line-height:1.3;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;display:block;cursor:default}
+.ev-chip:last-child{margin-bottom:0}
+.cal-legend{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:12px;align-items:center}
+.legend-item{display:flex;align-items:center;gap:5px;font-size:11px;color:var(--t2)}
+.legend-dot{width:8px;height:8px;border-radius:2px;flex-shrink:0}
+.cal-month-tabs{display:flex;gap:4px;flex-wrap:wrap;margin-bottom:12px}
+.cal-mtab{font-size:11px;padding:4px 9px;border-radius:4px;border:0.5px solid var(--bd);background:transparent;color:var(--t2);cursor:pointer;transition:all .15s}
+.cal-mtab:hover{background:var(--bg3)}
+.cal-mtab.active{background:var(--ac2);border-color:var(--ac);color:#fff;font-weight:500}
 .imp-high{color:var(--rd)}
 .imp-mid{color:var(--am)}
 .imp-low{color:var(--t2)}
-.star{font-size:9px}
 
 /* 센티먼트 */
 .sent-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:9px;margin-bottom:12px}
@@ -221,6 +238,35 @@ select option{background:var(--bg3)}
   .cal-grid,.g2,.g3,.sent-grid{grid-template-columns:1fr}
   .jnl-lbl{width:100%;padding-top:0}
 }
+
+/* ── 시장 지표 탭 ── */
+.mkt-section{margin-bottom:16px}
+.mkt-sec-title{font-size:10px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--t3);margin-bottom:9px;display:flex;align-items:center;gap:6px}
+.mkt-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:8px;margin-bottom:4px}
+.mkt-card{background:var(--bg2);border:1px solid var(--bd);border-radius:9px;padding:12px 13px;transition:border-color .15s;cursor:pointer;text-decoration:none;display:block}
+.mkt-card:hover{border-color:var(--bd2);background:var(--bg3)}
+.mkt-card-label{font-size:10px;color:var(--t2);margin-bottom:4px;display:flex;align-items:center;gap:4px;justify-content:space-between}
+.mkt-card-val{font-size:20px;font-weight:700;margin-bottom:2px;letter-spacing:-.5px}
+.mkt-card-sub{font-size:10px;display:flex;align-items:center;gap:5px;flex-wrap:wrap}
+.mkt-up{color:#ef4444}
+.mkt-dn{color:#3b82f6}
+.mkt-neu{color:var(--t2)}
+.mkt-chg{font-size:11px;font-weight:500}
+.mkt-src{font-size:9px;color:var(--t3)}
+.mkt-loading{color:var(--t3);font-size:13px;animation:mktpulse 1.2s infinite}
+@keyframes mktpulse{0%,100%{opacity:.4}50%{opacity:1}}
+.mkt-refresh-btn{font-size:11px;padding:4px 10px;border-radius:5px;border:1px solid var(--bd);background:transparent;cursor:pointer;color:var(--t2);display:flex;align-items:center;gap:4px;transition:all .15s}
+.mkt-refresh-btn:hover{background:var(--bg3);border-color:var(--bd2)}
+.mkt-top-bar{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;flex-wrap:wrap;gap:8px}
+.mkt-update-time{font-size:11px;color:var(--t3);font-family:var(--mn)}
+.mkt-link-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:8px}
+.mkt-link-card{background:var(--bg2);border:1px solid var(--bd);border-radius:8px;padding:10px 13px;display:flex;align-items:center;gap:10px;text-decoration:none;transition:border-color .15s}
+.mkt-link-card:hover{border-color:var(--bd2);background:var(--bg3)}
+.mkt-link-icon{font-size:18px;flex-shrink:0}
+.mkt-link-body{}
+.mkt-link-name{font-size:12px;font-weight:500;color:var(--t);margin-bottom:1px}
+.mkt-link-desc{font-size:10px;color:var(--t2)}
+.mkt-warn{background:rgba(245,158,11,.06);border:1px solid rgba(245,158,11,.2);border-radius:7px;padding:9px 12px;font-size:11px;color:#fcd34d;margin-bottom:12px;line-height:1.6}
 </style>
 </head>
 <body>
@@ -243,6 +289,7 @@ select option{background:var(--bg3)}
     <div class="sbi link" onclick="goTab(5)">🐦 SNS 인플루언서</div>
     <div class="sbi link" onclick="goTab(6)">🏛 13F · SEC</div>
     <div class="sbi link" onclick="goTab(7)">📓 투자 판단 일지</div>
+    <div class="sbi link" onclick="goTab(8)">📈 시장 핵심 지표</div>
   </aside>
 
   <main class="mn">
@@ -255,6 +302,7 @@ select option{background:var(--bg3)}
       <button class="tabb" onclick="goTab(5)">SNS</button>
       <button class="tabb" onclick="goTab(6)">13F·SEC</button>
       <button class="tabb" onclick="goTab(7)">판단 일지</button>
+      <button class="tabb" onclick="goTab(8)">시장 지표</button>
     </div>
 
     <!-- 0: 피드 설정 -->
@@ -306,9 +354,18 @@ select option{background:var(--bg3)}
 
     <!-- 3: 이벤트 캘린더 -->
     <div class="tp" id="p3">
-      <div class="ib">주요 경제 이벤트 일정입니다. 이 일정들을 미리 파악하고 대응 전략을 세우세요.</div>
-      <div class="wb">⚠ 아래 일정은 2026년 주요 일정 기준입니다. 실제 발표일은 각 기관 홈페이지에서 반드시 재확인하세요.</div>
-      <div class="cal-grid" id="cal-grid"></div>
+      <div class="ib">월별 캘린더로 주요 경제 이벤트를 확인하세요. 좌우 화살표 또는 월 탭으로 이동합니다.</div>
+      <div class="wb">⚠ 2026년 주요 일정 기준입니다. 실제 발표일은 각 기관 홈페이지에서 반드시 재확인하세요.</div>
+      <div class="cal-legend" id="cal-legend"></div>
+      <div class="cal-nav">
+        <button class="cal-nav-btn" onclick="calMove(-1)">&#8249;</button>
+        <div>
+          <div class="cal-nav-title" id="cal-month-title"></div>
+          <div class="cal-month-tabs" id="cal-month-tabs"></div>
+        </div>
+        <button class="cal-nav-btn" onclick="calMove(1)">&#8250;</button>
+      </div>
+      <div class="cal-month-wrap" id="cal-wrap"></div>
       <div class="g2">
         <div class="ec">
           <div class="eh"><div class="ei" style="background:rgba(59,130,246,.12)">🔗</div><div><div class="et">공식 일정 확인 링크</div><div class="es">실시간 일정은 아래 링크에서 확인</div></div></div>
@@ -327,6 +384,7 @@ select option{background:var(--bg3)}
         </div>
       </div>
     </div>
+
 
     <!-- 4: 센티먼트 -->
     <div class="tp" id="p4">
@@ -427,6 +485,33 @@ select option{background:var(--bg3)}
 
       <div class="jnl-entries" id="jnl-entries"></div>
     </div>
+
+        <!-- 8: 시장 핵심 지표 -->
+    <div class="tp" id="p8">
+      <div class="mkt-top-bar">
+        <div>
+          <div style="font-size:14px;font-weight:500;margin-bottom:2px">시장 핵심 지표</div>
+          <div class="mkt-update-time" id="mkt-update-time">마지막 업데이트: --</div>
+        </div>
+        <button class="mkt-refresh-btn" onclick="loadMarketData()">↺ 새로고침</button>
+      </div>
+      <div class="mkt-warn">⚠ 환율은 Frankfurter API(ECB 기준, 영업일 16:00 CET 갱신)를 사용합니다. 유가·지수·채권은 실시간 무료 API가 없어 주요 사이트 바로가기를 제공합니다.</div>
+
+      <div class="mkt-section">
+        <div class="mkt-sec-title">💱 환율 (Frankfurter API · 무료 · API 키 불필요)</div>
+        <div class="mkt-grid" id="mkt-fx"></div>
+      </div>
+
+      <div class="mkt-section">
+        <div class="mkt-sec-title">📊 주요 지수 · 유가 · 금리 — 실시간 바로가기</div>
+        <div class="mkt-link-grid" id="mkt-links"></div>
+      </div>
+
+      <div class="mkt-section" style="margin-top:16px">
+        <div class="mkt-sec-title">🔎 추가 보완이 필요한 정보 — 투자자 관점 점검</div>
+        <div id="mkt-checklist"></div>
+      </div>
+    </div>
   </main>
 </div>
 
@@ -496,7 +581,95 @@ async function callClaude(key,focus,arts){const txt=arts.slice(0,30).map((a,i)=>
 let running=false;
 async function runSummary(){if(running)return;if(!feeds.length){alert('피드를 먼저 등록해주세요');return;}if(curMode==='ai'&&!document.getElementById('api-key').value.trim()){alert('API Key를 입력해주세요');return;}running=true;const btn=document.getElementById('run-btn');btn.disabled=true;const prog=document.getElementById('prog'),st=document.getElementById('run-st'),area=document.getElementById('result-area');area.innerHTML='';const setP=(p,m)=>{prog.style.width=p+'%';st.textContent=m;};try{const allArts=[];for(let i=0;i<feeds.length;i++){const f=feeds[i];setP(5+Math.round(i/feeds.length*50),`수집 중: ${f.name}`);const items=await fetchRSS(f.url);items.filter(a=>isRecent(a.pubDate)).forEach(a=>allArts.push({...a,feedName:f.name,cat:f.cat}));}if(!allArts.length){area.innerHTML=`<div class="eb">수집된 기사가 없습니다. RSS 주소를 확인하거나 잠시 후 다시 시도해주세요.</div>`;return;}let summary='',isAI=false;if(curMode==='ai'){setP(60,'Claude AI 분석 중...');const key=document.getElementById('api-key').value.trim(),focus=document.getElementById('focus').value.trim();try{summary=await callClaude(key,focus,allArts);isAI=true;setP(95,'AI 요약 완료');}catch(e){summary=`⚠ API 오류: ${e.message}\n\n`+freeSum(allArts);}}else{setP(65,'키워드 분석 중...');await new Promise(r=>setTimeout(r,350));summary=freeSum(allArts);setP(90,'요약 완료');}setP(100,'');renderResults(allArts,summary,isAI);if(transOn)setTimeout(translateAll,300);}catch(e){area.innerHTML=`<div class="eb">오류: ${e.message}</div>`;}finally{btn.disabled=false;btn.textContent=curMode==='ai'?'↺ 다시 실행':'↺ 다시 실행';running=false;setTimeout(()=>{prog.style.width='0';st.textContent='';},1400);}}
 
-function renderResults(arts,summary,isAI){const area=document.getElementById('result-area');area.innerHTML='';const sb=document.createElement('div');sb.className='sb3 '+(isAI?'sai':'sfr');sb.innerHTML=`<div class="slb ${isAI?'sla':'slf'}">${isAI?'▲ Claude AI 종합 요약':'▲ 자동 요약 · 키워드 기반'}</div><div class="stx">${esc(summary)}</div>`;area.appendChild(sb);const hasEn=arts.some(a=>isEng(a.title));if(hasEn&&!transOn){const tip=document.createElement('div');tip.style.cssText='font-size:12px;color:var(--t2);background:rgba(59,130,246,.06);border:1px solid rgba(59,130,246,.15);border-radius:7px;padding:8px 12px;margin-bottom:9px;display:flex;align-items:center;gap:7px';tip.innerHTML=`<span style="color:#93c5fd;font-size:14px">⟳</span>영문 기사가 포함되어 있습니다. 상단 번역 버튼을 켜면 한국어로 번역됩니다.`;area.appendChild(tip);}const grp={};arts.forEach(a=>{if(!grp[a.cat])grp[a.cat]=[];grp[a.cat].push(a);});['macro','market','corp','global','insight'].forEach(cat=>{if(!grp[cat]?.length)return;const c=CATS[cat]||CATS.insight;const card=document.createElement('div');card.className='rc';let html=`<div class="rch"><span class="cdt" style="background:${c.color}"></span><span class="rct">${c.label}</span><span class="rcc">${grp[cat].length}건</span></div>`;grp[cat].forEach((a,idx)=>{const imp=idx===0?IMP.high:idx<3?IMP.mid:IMP.low;const enT=isEng(a.title);const oc=a.link?`window.open(${JSON.stringify(a.link)},'_blank')`:'';html+=`<div class="ar2" onclick="${oc}"><div class="al2"><span class="anum">${String(idx+1).padStart(2,'0')}</span><span class="idot" style="background:${imp.dot}"></span></div><div class="ab3"><div class="att">${esc(a.title)}</div>${enT?`<div class="ako${transOn?' show':''}" data-orig="${esc(a.title)}">번역 중...</div>`:''} ${a.desc?`<div class="ade">${esc(a.desc)}</div>`:''}<div class="aft"><span class="as">${esc(a.feedName)}</span><span class="as">${fmtTime(a.pubDate)}</span><span class="ib2" style="background:${imp.bg};color:${imp.text}">${imp.label}</span>${enT?`<span class="kb${transOn?' show':''}">한국어 번역</span>`:''} ${a.link?`<span class="as" style="color:var(--ac)">↗ 원문</span>`:''}</div></div></div>`;});card.innerHTML=html;area.appendChild(card);});const ft=document.createElement('div');ft.style.cssText='text-align:center;padding:12px;color:var(--t3);font-size:11px;font-family:var(--mn)';ft.textContent=`총 ${arts.length}건 · ${today.toLocaleTimeString('ko-KR')} 기준`;area.appendChild(ft);}
+function renderResults(arts,summary,isAI){
+  const area=document.getElementById('result-area');
+  area.innerHTML='';
+  const sb=document.createElement('div');
+  sb.className='sb3 '+(isAI?'sai':'sfr');
+  const sumDiv=document.createElement('div');
+  sumDiv.className='slb '+(isAI?'sla':'slf');
+  sumDiv.textContent=isAI?'▲ Claude AI 종합 요약':'▲ 자동 요약 · 키워드 기반';
+  const sumTxt=document.createElement('div');
+  sumTxt.className='stx';
+  sumTxt.textContent=summary;
+  sb.appendChild(sumDiv);
+  sb.appendChild(sumTxt);
+  area.appendChild(sb);
+  const hasEn=arts.some(a=>isEng(a.title));
+  if(hasEn&&!transOn){
+    const tip=document.createElement('div');
+    tip.style.cssText='font-size:12px;color:var(--t2);background:rgba(59,130,246,.06);border:1px solid rgba(59,130,246,.15);border-radius:7px;padding:8px 12px;margin-bottom:9px;display:flex;align-items:center;gap:7px';
+    tip.innerHTML='<span style="color:#93c5fd;font-size:14px">\u21ba</span>영문 기사가 포함되어 있습니다. 상단 번역 버튼을 켜면 한국어로 번역됩니다.';
+    area.appendChild(tip);
+  }
+  const grp={};
+  arts.forEach(a=>{if(!grp[a.cat])grp[a.cat]=[];grp[a.cat].push(a);});
+  ['macro','market','corp','global','insight'].forEach(cat=>{
+    if(!grp[cat]?.length)return;
+    const c=CATS[cat]||CATS.insight;
+    const card=document.createElement('div');
+    card.className='rc';
+    const hdr=document.createElement('div');
+    hdr.className='rch';
+    hdr.innerHTML='<span class="cdt" style="background:'+c.color+'"></span><span class="rct">'+c.label+'</span><span class="rcc">'+grp[cat].length+'건</span>';
+    card.appendChild(hdr);
+    grp[cat].forEach((a,idx)=>{
+      const imp=idx===0?IMP.high:idx<3?IMP.mid:IMP.low;
+      const enT=isEng(a.title);
+      let row;
+      if(a.link){
+        row=document.createElement('a');
+        row.href=a.link;
+        row.target='_blank';
+        row.rel='noopener noreferrer';
+        row.style.textDecoration='none';
+        row.style.color='inherit';
+        row.style.display='flex';
+      } else {
+        row=document.createElement('div');
+      }
+      row.className='ar2';
+      const left=document.createElement('div');
+      left.className='al2';
+      left.innerHTML='<span class="anum">'+String(idx+1).padStart(2,'0')+'</span><span class="idot" style="background:'+imp.dot+'"></span>';
+      const body=document.createElement('div');
+      body.className='ab3';
+      const ttl=document.createElement('div');
+      ttl.className='att';
+      ttl.textContent=a.title;
+      body.appendChild(ttl);
+      if(enT){
+        const ko=document.createElement('div');
+        ko.className='ako'+(transOn?' show':'');
+        ko.dataset.orig=a.title;
+        ko.textContent='번역 중...';
+        body.appendChild(ko);
+      }
+      if(a.desc){
+        const desc=document.createElement('div');
+        desc.className='ade';
+        desc.textContent=a.desc;
+        body.appendChild(desc);
+      }
+      const ft2=document.createElement('div');
+      ft2.className='aft';
+      ft2.innerHTML='<span class="as">'+esc(a.feedName)+'</span>'
+        +'<span class="as">'+fmtTime(a.pubDate)+'</span>'
+        +'<span class="ib2" style="background:'+imp.bg+';color:'+imp.text+'">'+imp.label+'</span>'
+        +(enT?'<span class="kb'+(transOn?' show':'')+'">한국어 번역</span>':'')
+        +(a.link?'<span class="as" style="color:var(--ac)">↗ 원문</span>':'');
+      body.appendChild(ft2);
+      row.appendChild(left);
+      row.appendChild(body);
+      card.appendChild(row);
+    });
+    area.appendChild(card);
+  });
+  const ft=document.createElement('div');
+  ft.style.cssText='text-align:center;padding:12px;color:var(--t3);font-size:11px;font-family:var(--mn)';
+  ft.textContent='총 '+arts.length+'건 · '+today.toLocaleTimeString('ko-KR')+' 기준';
+  area.appendChild(ft);
+}
 
 /* ── 추천 RSS 데이터 ── */
 const RSS_DATA=[
@@ -510,39 +683,250 @@ function buildRssGrid(){const g=document.getElementById('rss-grid');g.innerHTML=
 function quickAdd(url,name,cat,btn){if(addFeed(url,name,cat)){btn.textContent='✓ 추가됨';btn.classList.add('added');}}
 
 /* ── 이벤트 캘린더 데이터 ── */
-const CAL_EVENTS=[
-  {title:'미국 FOMC 일정 (2026)',color:'#3b82f6',events:[
-    {date:'01/27-28',name:'FOMC 정례회의',sub:'금리 결정·성명서·기자회견',imp:'high'},
-    {date:'03/17-18',name:'FOMC 정례회의',sub:'SEP(점도표) 발표',imp:'high'},
-    {date:'04/28-29',name:'FOMC 정례회의',sub:'금리 결정·성명서',imp:'high'},
-    {date:'06/09-10',name:'FOMC 정례회의',sub:'SEP(점도표) 발표',imp:'high'},
-    {date:'07/28-29',name:'FOMC 정례회의',sub:'금리 결정·성명서',imp:'high'},
-    {date:'09/15-16',name:'FOMC 정례회의',sub:'SEP(점도표) 발표',imp:'high'},
-  ]},
-  {title:'한국 금통위 일정 (2026)',color:'#10b981',events:[
-    {date:'01/16',name:'금융통화위원회',sub:'기준금리 결정',imp:'high'},
-    {date:'02/27',name:'금융통화위원회',sub:'기준금리 결정',imp:'high'},
-    {date:'04/17',name:'금융통화위원회',sub:'기준금리 결정',imp:'high'},
-    {date:'05/29',name:'금융통화위원회',sub:'기준금리 결정',imp:'high'},
-    {date:'07/17',name:'금융통화위원회',sub:'기준금리 결정',imp:'high'},
-    {date:'08/28',name:'금융통화위원회',sub:'기준금리 결정',imp:'high'},
-  ]},
-  {title:'미국 주요 지표 (월간)',color:'#f59e0b',events:[
-    {date:'매월 둘째주',name:'CPI 소비자물가',sub:'전년비·전월비 — 시장 민감도 최고',imp:'high'},
-    {date:'매월 첫째금',name:'NFP 비농업고용',sub:'고용시장 핵심 지표',imp:'high'},
-    {date:'매월 셋째주',name:'소매판매',sub:'소비 동향 파악',imp:'mid'},
-    {date:'분기 말',name:'GDP 성장률',sub:'전기비 성장률 (잠정·확정)',imp:'high'},
-    {date:'매월 넷째목',name:'PCE 물가지수',sub:'연준 선호 인플레이션 지표',imp:'high'},
-  ]},
-  {title:'국내 주요 지표',color:'#14b8a6',events:[
-    {date:'매월 초',name:'수출입 동향',sub:'수출 증감률 — 코스피 선행 지표',imp:'high'},
-    {date:'매월 중순',name:'CPI 소비자물가',sub:'통계청 물가 발표',imp:'mid'},
-    {date:'분기별',name:'GDP 성장률',sub:'한국은행 발표',imp:'high'},
-    {date:'분기별',name:'외국인 증권투자',sub:'주식·채권 순매수 동향',imp:'mid'},
-    {date:'분기별',name:'기업 실적발표',sub:'1Q: 4월, 2Q: 7월, 3Q: 10월, 4Q: 1월',imp:'high'},
-  ]},
+// 월별 이벤트: month(1-12), day(일), type, name, sub, imp, color
+const CAL_EV_DATA=[
+  // FOMC
+  {month:1,day:27,dayEnd:28,name:'FOMC',sub:'금리결정·기자회견',imp:'high',color:'#3b82f6',tag:'FOMC'},
+  {month:3,day:17,dayEnd:18,name:'FOMC',sub:'SEP 점도표 발표',imp:'high',color:'#3b82f6',tag:'FOMC'},
+  {month:4,day:28,dayEnd:29,name:'FOMC',sub:'금리결정·성명서',imp:'high',color:'#3b82f6',tag:'FOMC'},
+  {month:6,day:9,dayEnd:10,name:'FOMC',sub:'SEP 점도표 발표',imp:'high',color:'#3b82f6',tag:'FOMC'},
+  {month:7,day:28,dayEnd:29,name:'FOMC',sub:'금리결정·성명서',imp:'high',color:'#3b82f6',tag:'FOMC'},
+  {month:9,day:15,dayEnd:16,name:'FOMC',sub:'SEP 점도표 발표',imp:'high',color:'#3b82f6',tag:'FOMC'},
+  {month:10,day:27,dayEnd:28,name:'FOMC',sub:'금리결정·성명서',imp:'high',color:'#3b82f6',tag:'FOMC'},
+  {month:12,day:15,dayEnd:16,name:'FOMC',sub:'SEP 점도표 발표',imp:'high',color:'#3b82f6',tag:'FOMC'},
+  // 한국 금통위
+  {month:1,day:16,name:'금통위',sub:'기준금리 결정',imp:'high',color:'#10b981',tag:'금통위'},
+  {month:2,day:27,name:'금통위',sub:'기준금리 결정',imp:'high',color:'#10b981',tag:'금통위'},
+  {month:4,day:17,name:'금통위',sub:'기준금리 결정',imp:'high',color:'#10b981',tag:'금통위'},
+  {month:5,day:29,name:'금통위',sub:'기준금리 결정',imp:'high',color:'#10b981',tag:'금통위'},
+  {month:7,day:17,name:'금통위',sub:'기준금리 결정',imp:'high',color:'#10b981',tag:'금통위'},
+  {month:8,day:28,name:'금통위',sub:'기준금리 결정',imp:'high',color:'#10b981',tag:'금통위'},
+  {month:10,day:16,name:'금통위',sub:'기준금리 결정',imp:'high',color:'#10b981',tag:'금통위'},
+  {month:11,day:27,name:'금통위',sub:'기준금리 결정',imp:'high',color:'#10b981',tag:'금통위'},
+  // 미국 CPI (매월 둘째주 수요일 전후, 2026년 예상)
+  {month:1,day:14,name:'미국 CPI',sub:'소비자물가 발표',imp:'high',color:'#f59e0b',tag:'CPI'},
+  {month:2,day:11,name:'미국 CPI',sub:'소비자물가 발표',imp:'high',color:'#f59e0b',tag:'CPI'},
+  {month:3,day:11,name:'미국 CPI',sub:'소비자물가 발표',imp:'high',color:'#f59e0b',tag:'CPI'},
+  {month:4,day:10,name:'미국 CPI',sub:'소비자물가 발표',imp:'high',color:'#f59e0b',tag:'CPI'},
+  {month:5,day:13,name:'미국 CPI',sub:'소비자물가 발표',imp:'high',color:'#f59e0b',tag:'CPI'},
+  {month:6,day:10,name:'미국 CPI',sub:'소비자물가 발표',imp:'high',color:'#f59e0b',tag:'CPI'},
+  {month:7,day:14,name:'미국 CPI',sub:'소비자물가 발표',imp:'high',color:'#f59e0b',tag:'CPI'},
+  {month:8,day:12,name:'미국 CPI',sub:'소비자물가 발표',imp:'high',color:'#f59e0b',tag:'CPI'},
+  {month:9,day:9,name:'미국 CPI',sub:'소비자물가 발표',imp:'high',color:'#f59e0b',tag:'CPI'},
+  {month:10,day:14,name:'미국 CPI',sub:'소비자물가 발표',imp:'high',color:'#f59e0b',tag:'CPI'},
+  {month:11,day:12,name:'미국 CPI',sub:'소비자물가 발표',imp:'high',color:'#f59e0b',tag:'CPI'},
+  {month:12,day:9,name:'미국 CPI',sub:'소비자물가 발표',imp:'high',color:'#f59e0b',tag:'CPI'},
+  // 미국 NFP (매월 첫째 금요일)
+  {month:1,day:9,name:'NFP',sub:'비농업고용 발표',imp:'high',color:'#f59e0b',tag:'NFP'},
+  {month:2,day:6,name:'NFP',sub:'비농업고용 발표',imp:'high',color:'#f59e0b',tag:'NFP'},
+  {month:3,day:6,name:'NFP',sub:'비농업고용 발표',imp:'high',color:'#f59e0b',tag:'NFP'},
+  {month:4,day:3,name:'NFP',sub:'비농업고용 발표',imp:'high',color:'#f59e0b',tag:'NFP'},
+  {month:5,day:8,name:'NFP',sub:'비농업고용 발표',imp:'high',color:'#f59e0b',tag:'NFP'},
+  {month:6,day:5,name:'NFP',sub:'비농업고용 발표',imp:'high',color:'#f59e0b',tag:'NFP'},
+  {month:7,day:10,name:'NFP',sub:'비농업고용 발표',imp:'high',color:'#f59e0b',tag:'NFP'},
+  {month:8,day:7,name:'NFP',sub:'비농업고용 발표',imp:'high',color:'#f59e0b',tag:'NFP'},
+  {month:9,day:4,name:'NFP',sub:'비농업고용 발표',imp:'high',color:'#f59e0b',tag:'NFP'},
+  {month:10,day:2,name:'NFP',sub:'비농업고용 발표',imp:'high',color:'#f59e0b',tag:'NFP'},
+  {month:11,day:6,name:'NFP',sub:'비농업고용 발표',imp:'high',color:'#f59e0b',tag:'NFP'},
+  {month:12,day:4,name:'NFP',sub:'비농업고용 발표',imp:'high',color:'#f59e0b',tag:'NFP'},
+  // 한국 수출입 동향 (매월 1일)
+  {month:1,day:1,name:'한국 수출입',sub:'전월 수출입 실적',imp:'high',color:'#14b8a6',tag:'수출입'},
+  {month:2,day:1,name:'한국 수출입',sub:'전월 수출입 실적',imp:'high',color:'#14b8a6',tag:'수출입'},
+  {month:3,day:1,name:'한국 수출입',sub:'전월 수출입 실적',imp:'high',color:'#14b8a6',tag:'수출입'},
+  {month:4,day:1,name:'한국 수출입',sub:'전월 수출입 실적',imp:'high',color:'#14b8a6',tag:'수출입'},
+  {month:5,day:1,name:'한국 수출입',sub:'전월 수출입 실적',imp:'high',color:'#14b8a6',tag:'수출입'},
+  {month:6,day:1,name:'한국 수출입',sub:'전월 수출입 실적',imp:'high',color:'#14b8a6',tag:'수출입'},
+  {month:7,day:1,name:'한국 수출입',sub:'전월 수출입 실적',imp:'high',color:'#14b8a6',tag:'수출입'},
+  {month:8,day:1,name:'한국 수출입',sub:'전월 수출입 실적',imp:'high',color:'#14b8a6',tag:'수출입'},
+  {month:9,day:1,name:'한국 수출입',sub:'전월 수출입 실적',imp:'high',color:'#14b8a6',tag:'수출입'},
+  {month:10,day:1,name:'한국 수출입',sub:'전월 수출입 실적',imp:'high',color:'#14b8a6',tag:'수출입'},
+  {month:11,day:1,name:'한국 수출입',sub:'전월 수출입 실적',imp:'high',color:'#14b8a6',tag:'수출입'},
+  {month:12,day:1,name:'한국 수출입',sub:'전월 수출입 실적',imp:'high',color:'#14b8a6',tag:'수출입'},
+  // 기업 실적발표 시즌
+  {month:1,day:15,name:'4Q 실적 시즌',sub:'국내외 4분기 실적발표 시작',imp:'mid',color:'#8b5cf6',tag:'실적'},
+  {month:4,day:10,name:'1Q 실적 시즌',sub:'국내외 1분기 실적발표 시작',imp:'mid',color:'#8b5cf6',tag:'실적'},
+  {month:7,day:10,name:'2Q 실적 시즌',sub:'국내외 2분기 실적발표 시작',imp:'mid',color:'#8b5cf6',tag:'실적'},
+  {month:10,day:10,name:'3Q 실적 시즌',sub:'국내외 3분기 실적발표 시작',imp:'mid',color:'#8b5cf6',tag:'실적'},
 ];
-function buildCalGrid(){const g=document.getElementById('cal-grid');g.innerHTML='';CAL_EVENTS.forEach(sec=>{const card=document.createElement('div');card.className='cal-card';let html=`<div class="cal-hdr" style="border-left:3px solid ${sec.color}"><span>${sec.title}</span></div>`;sec.events.forEach(e=>{const impClass=e.imp==='high'?'imp-high':'imp-mid';html+=`<div class="ev-row"><div class="ev-date ${impClass}">${e.date}</div><div class="ev-body"><div class="ev-name">${e.name} <span class="star ${impClass}">${e.imp==='high'?'★★★':'★★'}</span></div><div class="ev-sub">${e.sub}</div></div></div>`;});card.innerHTML=html;g.appendChild(card);});}
+
+const LEGEND_ITEMS=[
+  {tag:'FOMC',color:'#3b82f6',label:'FOMC'},
+  {tag:'금통위',color:'#10b981',label:'금통위'},
+  {tag:'CPI',color:'#f59e0b',label:'미국 CPI'},
+  {tag:'NFP',color:'#f59e0b',label:'미국 NFP'},
+  {tag:'수출입',color:'#14b8a6',label:'한국 수출입'},
+  {tag:'실적',color:'#8b5cf6',label:'실적 시즌'},
+];
+
+const MONTH_KO=['1월','2월','3월','4월','5월','6월','7월','8월','9월','10월','11월','12월'];
+const DOW_KO=['일','월','화','수','목','금','토'];
+let calYear=2026;
+let calMonth=today.getMonth()+1; // 현재 월로 초기화
+
+function buildCalendar(){
+  // 범례
+  const leg=document.getElementById('cal-legend');
+  leg.innerHTML='<span style="font-size:11px;color:var(--t2);margin-right:4px">범례:</span>';
+  LEGEND_ITEMS.forEach(l=>{
+    const el=document.createElement('div');
+    el.className='legend-item';
+    el.innerHTML='<span class="legend-dot" style="background:'+l.color+'"></span><span>'+l.label+'</span>';
+    leg.appendChild(el);
+  });
+
+  // 월 탭
+  const tabs=document.getElementById('cal-month-tabs');
+  tabs.innerHTML='';
+  for(let m=1;m<=12;m++){
+    const btn=document.createElement('button');
+    btn.className='cal-mtab'+(m===calMonth?' active':'');
+    btn.textContent=m+'월';
+    btn.onclick=(()=>{const mm=m;return()=>calGoTo(mm);})();
+    tabs.appendChild(btn);
+  }
+
+  renderCalMonth();
+}
+
+function calMove(dir){
+  calMonth+=dir;
+  if(calMonth>12){calMonth=1;}
+  if(calMonth<1){calMonth=12;}
+  document.querySelectorAll('.cal-mtab').forEach((b,i)=>b.classList.toggle('active',i+1===calMonth));
+  renderCalMonth();
+}
+
+function calGoTo(m){
+  calMonth=m;
+  document.querySelectorAll('.cal-mtab').forEach((b,i)=>b.classList.toggle('active',i+1===calMonth));
+  renderCalMonth();
+}
+
+function renderCalMonth(){
+  document.getElementById('cal-month-title').textContent=calYear+'년 '+MONTH_KO[calMonth-1];
+  const wrap=document.getElementById('cal-wrap');
+  wrap.innerHTML='';
+
+  const firstDay=new Date(calYear,calMonth-1,1).getDay(); // 0=일
+  const lastDate=new Date(calYear,calMonth,0).getDate();
+  const todayStr=jd(today);
+
+  // 이번 달 이벤트 인덱싱 (day -> events[])
+  const evMap={};
+  CAL_EV_DATA.forEach(e=>{
+    if(e.month!==calMonth)return;
+    const days=[];
+    days.push(e.day);
+    if(e.dayEnd&&e.dayEnd>e.day){
+      for(let d=e.day+1;d<=e.dayEnd&&d<=lastDate;d++) days.push(d);
+    }
+    days.forEach(d=>{
+      if(!evMap[d])evMap[d]=[];
+      evMap[d].push(e);
+    });
+  });
+
+  const grid=document.createElement('div');
+  grid.className='cal-grid-7';
+
+  // 요일 헤더
+  DOW_KO.forEach((d,i)=>{
+    const el=document.createElement('div');
+    el.className='cal-dow';
+    el.style.color=i===0?'var(--rd)':i===6?'#93c5fd':'var(--t3)';
+    el.textContent=d;
+    grid.appendChild(el);
+  });
+
+  // 이전 달 빈칸
+  for(let i=0;i<firstDay;i++){
+    const el=document.createElement('div');
+    el.className='cal-day other-month';
+    const prevLast=new Date(calYear,calMonth-1,0).getDate();
+    const dn=document.createElement('span');
+    dn.className='day-num';
+    dn.textContent=prevLast-firstDay+1+i;
+    el.appendChild(dn);
+    grid.appendChild(el);
+  }
+
+  // 이번 달 날짜
+  for(let d=1;d<=lastDate;d++){
+    const dateStr=calYear+'-'+String(calMonth).padStart(2,'0')+'-'+String(d).padStart(2,'0');
+    const dow=(firstDay+d-1)%7;
+    const el=document.createElement('div');
+    let cls='cal-day';
+    if(dateStr===todayStr) cls+=' today';
+    if(dow===0) cls+=' sunday';
+    if(dow===6) cls+=' saturday';
+    if(evMap[d]&&evMap[d].length>0) cls+=' has-event';
+    el.className=cls;
+
+    const dn=document.createElement('span');
+    dn.className='day-num';
+    dn.textContent=d;
+    el.appendChild(dn);
+
+    if(evMap[d]){
+      const shown=evMap[d].slice(0,3);
+      shown.forEach(e=>{
+        const chip=document.createElement('span');
+        chip.className='ev-chip';
+        chip.style.background=e.color+'22';
+        chip.style.color=e.color;
+        chip.style.border='0.5px solid '+e.color+'44';
+        chip.textContent=e.name;
+        chip.title=e.name+' — '+e.sub;
+        el.appendChild(chip);
+      });
+      if(evMap[d].length>3){
+        const more=document.createElement('span');
+        more.className='ev-chip';
+        more.style.cssText='background:var(--bg3);color:var(--t2);border:0.5px solid var(--bd)';
+        more.textContent='+'+( evMap[d].length-3)+'개';
+        el.appendChild(more);
+      }
+    }
+    grid.appendChild(el);
+  }
+
+  // 다음 달 빈칸 (6주 맞추기)
+  const total=firstDay+lastDate;
+  const remain=(7-total%7)%7;
+  for(let i=1;i<=remain;i++){
+    const el=document.createElement('div');
+    el.className='cal-day other-month';
+    const dn=document.createElement('span');
+    dn.className='day-num';
+    dn.textContent=i;
+    el.appendChild(dn);
+    grid.appendChild(el);
+  }
+
+  wrap.appendChild(grid);
+
+  // 이번 달 이벤트 목록 (하단)
+  const evList=CAL_EV_DATA.filter(e=>e.month===calMonth).sort((a,b)=>a.day-b.day);
+  if(evList.length>0){
+    const listWrap=document.createElement('div');
+    listWrap.style.cssText='background:var(--bg2);border:1px solid var(--bd);border-radius:10px;overflow:hidden;margin-top:8px';
+    const listHdr=document.createElement('div');
+    listHdr.style.cssText='padding:9px 14px;background:var(--bg3);border-bottom:1px solid var(--bd);font-size:12px;font-weight:500;color:var(--t2)';
+    listHdr.textContent=MONTH_KO[calMonth-1]+' 주요 이벤트 목록';
+    listWrap.appendChild(listHdr);
+    evList.forEach(e=>{
+      const row=document.createElement('div');
+      row.style.cssText='display:flex;align-items:flex-start;gap:12px;padding:9px 14px;border-bottom:0.5px solid var(--bd);font-size:12px';
+      const dateStr=e.day+'일'+(e.dayEnd?'~'+e.dayEnd+'일':'');
+      row.innerHTML='<span style="font-family:var(--mn);font-size:10px;color:'+e.color+';width:60px;flex-shrink:0;padding-top:2px;font-weight:500">'+dateStr+'</span>'
+        +'<span class="legend-dot" style="background:'+e.color+';margin-top:4px;flex-shrink:0"></span>'
+        +'<div style="flex:1"><div style="font-weight:500;margin-bottom:1px">'+e.name+'</div><div style="font-size:10px;color:var(--t2)">'+e.sub+'</div></div>'
+        +'<span style="font-size:9px;padding:2px 6px;border-radius:3px;background:'+e.color+'22;color:'+e.color+';flex-shrink:0">'+e.tag+'</span>';
+      listWrap.appendChild(row);
+    });
+    wrap.appendChild(listWrap);
+  }
+}
 
 /* ── 센티먼트 ── */
 const SENT=[
@@ -705,7 +1089,180 @@ function exportJournal(){
 function esc(s){return(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
 function fmtTime(s){if(!s)return'';try{const d=Math.floor((Date.now()-new Date(s).getTime())/60000);if(d<60)return d+'분 전';if(d<1440)return Math.floor(d/60)+'시간 전';return Math.floor(d/1440)+'일 전';}catch{return'';}}
 
-loadFeeds();renderFeeds();loadJournal();buildRssGrid();buildCalGrid();buildSentiment();buildSns();buildEdgar();renderJournal();
+loadFeeds();renderFeeds();loadJournal();buildRssGrid();buildCalendar();buildSentiment();buildSns();buildEdgar();renderJournal();
+
+/* ── 시장 핵심 지표 ── */
+const FX_PAIRS = [
+  {from:'USD',to:'KRW',label:'원/달러',unit:'원',color:'#3b82f6',link:'https://finance.naver.com/marketindex/exchangeDetail.naver?marketindexCd=FX_USDKRW'},
+  {from:'JPY',to:'KRW',label:'원/100엔',unit:'원',color:'#10b981',mult:100,link:'https://finance.naver.com/marketindex/exchangeDetail.naver?marketindexCd=FX_JPYKRW'},
+  {from:'EUR',to:'KRW',label:'원/유로',unit:'원',color:'#8b5cf6',link:'https://finance.naver.com/marketindex/exchangeDetail.naver?marketindexCd=FX_EURKRW'},
+  {from:'CNY',to:'KRW',label:'원/위안',unit:'원',color:'#f59e0b',link:'https://finance.naver.com/marketindex/exchangeDetail.naver?marketindexCd=FX_CNYKRW'},
+  {from:'USD',to:'JPY',label:'달러/엔',unit:'엔',color:'#14b8a6',link:'https://finance.yahoo.com/quote/USDJPY=X/'},
+  {from:'USD',to:'EUR',label:'달러/유로',unit:'유로',color:'#ef4444',link:'https://finance.yahoo.com/quote/EURUSD=X/'},
+];
+
+const MKT_LINKS = [
+  // 지수
+  {icon:'📈',name:'코스피',desc:'한국거래소 실시간',link:'https://finance.naver.com/sise/sise_index.naver?code=KOSPI'},
+  {icon:'📈',name:'코스닥',desc:'한국거래소 실시간',link:'https://finance.naver.com/sise/sise_index.naver?code=KOSDAQ'},
+  {icon:'📈',name:'S&P 500',desc:'미국 대형주 500',link:'https://finance.yahoo.com/quote/%5EGSPC/'},
+  {icon:'📈',name:'나스닥 100',desc:'기술주 중심',link:'https://finance.yahoo.com/quote/%5EIXIC/'},
+  {icon:'📈',name:'다우존스',desc:'30대 우량주',link:'https://finance.yahoo.com/quote/%5EDJI/'},
+  // 유가·원자재
+  {icon:'🛢',name:'WTI 원유',desc:'서부텍사스산 원유',link:'https://finance.yahoo.com/quote/CL=F/'},
+  {icon:'🛢',name:'브렌트유',desc:'국제 기준 원유',link:'https://finance.yahoo.com/quote/BZ=F/'},
+  {icon:'🥇',name:'금 (Gold)',desc:'국제 금 선물',link:'https://finance.yahoo.com/quote/GC=F/'},
+  {icon:'🔩',name:'구리 (Copper)',desc:'경기 선행 원자재',link:'https://finance.yahoo.com/quote/HG=F/'},
+  // 채권 수익률
+  {icon:'📉',name:'미국 10년 국채',desc:'글로벌 위험선호 핵심 지표',link:'https://finance.yahoo.com/quote/%5ETNX/'},
+  {icon:'📉',name:'미국 2년 국채',desc:'연준 기준금리 기대 반영',link:'https://finance.yahoo.com/quote/%5EIRX/'},
+  {icon:'📉',name:'한국 국고채 10년',desc:'국내 금리 동향',link:'https://finance.naver.com/bond/bondList.naver'},
+  // 금리
+  {icon:'🏦',name:'미국 기준금리',desc:'Fed Funds Rate 현황',link:'https://www.federalreserve.gov/monetarypolicy/openmarket.htm'},
+  {icon:'🏦',name:'한국 기준금리',desc:'한국은행 기준금리',link:'https://www.bok.or.kr/portal/singl/baseRate/list.do?menuNo=200643'},
+  // 기타
+  {icon:'😱',name:'VIX 공포지수',desc:'S&P500 변동성 지수',link:'https://finance.yahoo.com/quote/%5EVIX/'},
+  {icon:'🌡',name:'Fear & Greed',desc:'CNN 공포탐욕 지수',link:'https://edition.cnn.com/markets/fear-and-greed'},
+];
+
+const MKT_CHECKLIST = [
+  {done:true, title:'RSS 피드 수집 시스템',sub:'DART·한은·Bloomberg 등 23개 소스 — 완료'},
+  {done:true, title:'이벤트 캘린더',sub:'FOMC·금통위·CPI·NFP 월별 캘린더 — 완료'},
+  {done:true, title:'투자 판단 일지',sub:'Bull/Bear case, 감정 기록, CSV 내보내기 — 완료'},
+  {done:true, title:'SNS 인플루언서 목록',sub:'버핏·액크먼·버리 등 9명 바로가기 — 완료'},
+  {done:true, title:'13F / SEC EDGAR 연동',sub:'헤지펀드 포지션 조회 링크 — 완료'},
+  {done:true, title:'환율 실시간 조회',sub:'Frankfurter API 6개 통화쌍 — 완료'},
+  {done:false, title:'유가·지수 실시간 수치',sub:'무료 API 없음 → Yahoo Finance 바로가기 제공 / 필요 시 Alpha Vantage 무료 키(월 500회) 발급 검토'},
+  {done:false, title:'채권 수익률 실시간',sub:'미국 2·10년물 스프레드 — FRED API 무료 등록 후 연동 가능 (추후 추가 예정)'},
+  {done:false, title:'포트폴리오 수익률 트래킹',sub:'Google Sheets 연동 또는 일지 탭에 매수가 필드 추가 검토'},
+  {done:false, title:'공시 실시간 알림 (푸시)',sub:'n8n/Zapier → DART 공시 → 카카오톡·텔레그램 자동 알림'},
+  {done:false, title:'증권사 리서치 리포트 수집',sub:'미래에셋·키움·하나 무료 리포트 RSS 또는 이메일 → 노션 이관 루틴'},
+  {done:false, title:'주간 복기 루틴 고정',sub:'매주 같은 시간에 판단일지 복기 → Bear case 실현 여부 확인'},
+];
+
+let mktLoaded = false;
+async function loadMarketData() {
+  const fxEl = document.getElementById('mkt-fx');
+  if(!fxEl) return;
+  fxEl.innerHTML = '<div class="mkt-loading" style="grid-column:1/-1;padding:8px">환율 데이터 로딩 중...</div>';
+
+  const prev = {};
+  try {
+    // 전일 데이터
+    const yesterday = new Date(Date.now() - 86400000*2);
+    const prevDate = jd(yesterday);
+    const prevRes = await fetch(`https://api.frankfurter.dev/v1/${prevDate}?symbols=KRW,JPY,EUR,CNY`, {signal: AbortSignal.timeout(8000)});
+    if(prevRes.ok){ const pd = await prevRes.json(); Object.assign(prev, pd.rates||{}); }
+  } catch(e){}
+
+  try {
+    const res = await fetch('https://api.frankfurter.dev/v1/latest?symbols=KRW,JPY,EUR,CNY', {signal: AbortSignal.timeout(8000)});
+    if(!res.ok) throw new Error('API 오류');
+    const data = await res.json();
+    const rates = data.rates; // EUR base
+
+    // USD/KRW = rates.KRW
+    // JPY/KRW = rates.KRW / rates.JPY * 100
+    // EUR/KRW = rates.KRW (EUR is base)
+    // CNY/KRW = rates.KRW / rates.CNY
+    // USD/JPY = rates.JPY
+    // USD/EUR = 1/rates... → EUR is base, so USD = 1/rates.USD but USD not in symbols
+    // Re-fetch with USD base for USD pairs
+    const usdRes = await fetch('https://api.frankfurter.dev/v1/latest?base=USD&symbols=KRW,JPY,EUR,CNY', {signal: AbortSignal.timeout(8000)});
+    const usdData = await usdRes.json();
+    const usdRates = usdData.rates;
+
+    const fxValues = {
+      'USD/KRW': usdRates.KRW,
+      'JPY/KRW': usdRates.KRW / usdRates.JPY * 100,
+      'EUR/KRW': rates.KRW,
+      'CNY/KRW': usdRates.KRW / usdRates.CNY,
+      'USD/JPY': usdRates.JPY,
+      'USD/EUR': 1 / usdRates.EUR,
+    };
+
+    fxEl.innerHTML = '';
+    FX_PAIRS.forEach((pair, i) => {
+      const key = pair.from + '/' + pair.to;
+      const val = fxValues[key];
+      if(!val) return;
+      const dispVal = pair.label === '달러/유로' ? val.toFixed(4) : Math.round(val).toLocaleString('ko-KR');
+
+      // 변동 계산 (간이: 전일 대비 USD기준 KRW 비교)
+      let chgStr = '';
+      let chgClass = 'mkt-neu';
+      if(pair.from === 'USD' && pair.to === 'KRW' && prev.KRW) {
+        const chg = val - prev.KRW;
+        chgStr = (chg >= 0 ? '+' : '') + chg.toFixed(1);
+        chgClass = chg > 0 ? 'mkt-up' : chg < 0 ? 'mkt-dn' : 'mkt-neu';
+      }
+
+      const card = document.createElement('a');
+      card.className = 'mkt-card';
+      card.href = pair.link;
+      card.target = '_blank';
+      card.rel = 'noopener noreferrer';
+      card.innerHTML = `<div class="mkt-card-label"><span>${pair.label}</span><span style="font-size:9px;color:var(--t3)">${pair.from}→${pair.to}</span></div>
+        <div class="mkt-card-val" style="color:${pair.color}">${dispVal}</div>
+        <div class="mkt-card-sub">
+          <span class="mkt-src">${pair.unit} · ECB 기준</span>
+          ${chgStr ? `<span class="mkt-chg ${chgClass}">${chgStr}</span>` : ''}
+        </div>`;
+      fxEl.appendChild(card);
+    });
+
+    document.getElementById('mkt-update-time').textContent = '마지막 업데이트: ' + new Date().toLocaleTimeString('ko-KR') + ' (ECB 일일 기준)';
+    mktLoaded = true;
+
+  } catch(e) {
+    fxEl.innerHTML = `<div style="grid-column:1/-1;font-size:12px;color:#fca5a5;padding:8px">환율 로딩 실패: ${e.message}<br><span style="color:var(--t3)">네트워크 상태를 확인하거나 새로고침해주세요</span></div>`;
+  }
+}
+
+function buildMktLinks() {
+  const el = document.getElementById('mkt-links');
+  if(!el) return;
+  el.innerHTML = '';
+  MKT_LINKS.forEach(l => {
+    const a = document.createElement('a');
+    a.className = 'mkt-link-card';
+    a.href = l.link;
+    a.target = '_blank';
+    a.rel = 'noopener noreferrer';
+    a.innerHTML = `<div class="mkt-link-icon">${l.icon}</div><div class="mkt-link-body"><div class="mkt-link-name">${l.name}</div><div class="mkt-link-desc">${l.desc}</div></div><span style="font-size:11px;color:var(--ac);margin-left:auto;flex-shrink:0">↗</span>`;
+    el.appendChild(a);
+  });
+}
+
+function buildMktChecklist() {
+  const el = document.getElementById('mkt-checklist');
+  if(!el) return;
+  el.innerHTML = '';
+  const wrap = document.createElement('div');
+  wrap.style.cssText = 'background:var(--bg2);border:1px solid var(--bd);border-radius:10px;overflow:hidden';
+  MKT_CHECKLIST.forEach((item, i) => {
+    const row = document.createElement('div');
+    row.style.cssText = 'display:flex;align-items:flex-start;gap:10px;padding:9px 14px;border-bottom:0.5px solid var(--bd);font-size:12px' + (i===MKT_CHECKLIST.length-1?';border:none':'');
+    const chk = item.done
+      ? `<span style="width:16px;height:16px;border-radius:4px;background:rgba(16,185,129,.2);border:1px solid #10b981;display:flex;align-items:center;justify-content:center;font-size:10px;color:#10b981;flex-shrink:0;margin-top:1px">✓</span>`
+      : `<span style="width:16px;height:16px;border-radius:4px;border:1px solid var(--bd);display:flex;flex-shrink:0;margin-top:1px"></span>`;
+    row.innerHTML = chk + `<div style="flex:1"><div style="font-weight:500;margin-bottom:1px${item.done?';color:var(--t2)':''}">${item.title}</div><div style="font-size:10px;color:var(--t3)">${item.sub}</div></div>`;
+    wrap.appendChild(row);
+  });
+  el.appendChild(wrap);
+}
+
+// 시장 지표 탭 클릭 시 자동 로드
+const origGoTab = goTab;
+function goTab(n) {
+  origGoTab(n);
+  if(n === 8 && !mktLoaded) {
+    buildMktLinks();
+    buildMktChecklist();
+    loadMarketData();
+  }
+}
+
 </script>
 </body>
 </html>

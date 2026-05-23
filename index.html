@@ -294,15 +294,15 @@ select option{background:var(--bg3)}
 
   <main class="mn">
     <div class="tabs">
-      <button class="tabb ac" onclick="goTab(0)">피드 설정</button>
-      <button class="tabb" onclick="goTab(1)">오늘의 요약</button>
-      <button class="tabb" onclick="goTab(2)">추천 RSS</button>
-      <button class="tabb" onclick="goTab(3)">이벤트 캘린더</button>
-      <button class="tabb" onclick="goTab(4)">센티먼트</button>
-      <button class="tabb" onclick="goTab(5)">SNS</button>
-      <button class="tabb" onclick="goTab(6)">13F·SEC</button>
-      <button class="tabb" onclick="goTab(7)">판단 일지</button>
-      <button class="tabb" onclick="goTab(8)">시장 지표</button>
+      <button class="tabb" data-tab="0" ac" onclick="goTab(0)">피드 설정</button>
+      <button class="tabb" data-tab="1"" onclick="goTab(1)">오늘의 요약</button>
+      <button class="tabb" data-tab="2"" onclick="goTab(2)">추천 RSS</button>
+      <button class="tabb" data-tab="3"" onclick="goTab(3)">이벤트 캘린더</button>
+      <button class="tabb" data-tab="4"" onclick="goTab(4)">센티먼트</button>
+      <button class="tabb" data-tab="5"" onclick="goTab(5)">SNS</button>
+      <button class="tabb" data-tab="6"" onclick="goTab(6)">13F·SEC</button>
+      <button class="tabb" data-tab="7"" onclick="goTab(7)">판단 일지</button>
+      <button class="tabb" data-tab="8"" onclick="goTab(8)">시장 지표</button>
     </div>
 
     <!-- 0: 피드 설정 -->
@@ -557,7 +557,16 @@ function delFeed(id){feeds=feeds.filter(f=>f.id!==id);saveFeeds();renderFeeds();
 function fillUrl(u,n,c){document.getElementById('in-url').value=u;document.getElementById('in-name').value=n;document.getElementById('in-cat').value=c;}
 
 /* 탭 */
-function goTab(n){document.querySelectorAll('.tabb').forEach((b,i)=>b.classList.toggle('ac',i===n));document.querySelectorAll('.tp').forEach((p,i)=>p.classList.toggle('ac',i===n));}
+function goTab(n){
+  document.querySelectorAll('.tabb').forEach(b=>{
+    b.classList.toggle('ac', parseInt(b.dataset.tab)===n);
+  });
+  for(var i=0;i<9;i++){
+    var el=document.getElementById('p'+i);
+    if(el) el.style.display=(i===n)?'block':'none';
+  }
+  if(n===8&&!mktLoaded){buildMktLinks();buildMktChecklist();loadMarketData();}
+}
 
 /* 모드 */
 let curMode='free';
@@ -1090,6 +1099,7 @@ function esc(s){return(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace
 function fmtTime(s){if(!s)return'';try{const d=Math.floor((Date.now()-new Date(s).getTime())/60000);if(d<60)return d+'분 전';if(d<1440)return Math.floor(d/60)+'시간 전';return Math.floor(d/1440)+'일 전';}catch{return'';}}
 
 loadFeeds();renderFeeds();loadJournal();buildRssGrid();buildCalendar();buildSentiment();buildSns();buildEdgar();renderJournal();
+goTab(0);
 
 /* ── 시장 핵심 지표 ── */
 const FX_PAIRS = [
@@ -1252,16 +1262,6 @@ function buildMktChecklist() {
   el.appendChild(wrap);
 }
 
-// 시장 지표 탭 클릭 시 자동 로드
-const origGoTab = goTab;
-function goTab(n) {
-  origGoTab(n);
-  if(n === 8 && !mktLoaded) {
-    buildMktLinks();
-    buildMktChecklist();
-    loadMarketData();
-  }
-}
 
 </script>
 </body>
